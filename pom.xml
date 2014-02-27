@@ -1,0 +1,247 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- The basics. -->
+  <groupId>net.hydromatic</groupId>
+  <artifactId>optiq-web</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <!-- More project information. -->
+  <name>optiq-web</name>
+  <description>Optiq provider that reads web (HTML tables.</description>
+  <url>http://github.com/henryolson/optiq-web</url>
+  <inceptionYear>2014</inceptionYear>
+  <organization>
+    <name>Henry Olson</name>
+    <url>http://www.henryolson.net</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>henryolson</id>
+      <name>Henry Olson</name>
+      <email>henry.olson@gmail.com</email>
+      <url>https://github.com/henryolson</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-8</timezone>
+      <properties />
+    </developer>
+  </developers>
+
+  <mailingLists>
+    <mailingList>
+      <name>Optiq developers list</name>
+      <subscribe>optiq-dev-subscribe@googlegroups.com</subscribe>
+      <unsubscribe>optiq-dev-unsubscribe@googlegroups.com</unsubscribe>
+      <post>optiq-dev@googlegroups.com</post>
+      <archive>http://groups.google.com/group/optiq-dev</archive>
+    </mailingList>
+  </mailingLists>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <top.dir>${project.basedir}</top.dir>
+  </properties>
+
+  <!-- Environment settings. -->
+  <distributionManagement>
+    <repository>
+      <id>conjars</id>
+      <name>Concurrent Conjars repository</name>
+      <url>http://conjars.org/repo</url>
+      <layout>default</layout>
+    </repository>
+  </distributionManagement>
+
+  <issueManagement />
+
+  <scm>
+    <connection>scm:git:git://github.com/henryolson/optiq-web.git</connection>
+    <developerConnection>scm:git:git@github.com:henryolson/optiq-web.git</developerConnection>
+    <url>http://github.com/henryolson/optiq-web/tree/master</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <!-- Dependencies. -->
+  <dependencies>
+    <dependency> 
+      <groupId>com.joestelmach</groupId>
+      <artifactId>natty</artifactId>
+      <version>0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.hydromatic</groupId>
+      <artifactId>optiq-core</artifactId>
+      <!--
+      <version>LATEST</version>
+      -->
+      <version>0.4.18</version>
+    </dependency>
+    <dependency>
+      <groupId>net.hydromatic</groupId>
+      <artifactId>linq4j</artifactId>
+      <version>0.1.13</version>
+    </dependency>
+    <dependency>
+      <groupId>sqlline</groupId>
+      <artifactId>sqlline</artifactId>
+      <version>1.1.7</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+	<!-- jsoup HTML parser library @ http://jsoup.org/ -->
+        <groupId>org.jsoup</groupId>
+	<artifactId>jsoup</artifactId>
+	<version>1.7.3</version>
+    </dependency>
+  </dependencies>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <links>
+            <link>http://docs.oracle.com/javase/7/docs/api/</link>
+          </links>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <id>pentaho</id>
+      <name>Pentaho</name>
+      <url>http://repo.pentaho.org/artifactory/repo</url>
+      <layout>default</layout>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <id>conjars</id>
+      <name>Conjars</name>
+      <url>http://conjars.org/repo</url>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.2</version>
+          <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+	      <artifactId>jalopy-maven-plugin</artifactId>
+	      <version>1.0-alpha-1</version>
+	      <configuration>
+	        <srcExcludesPattern>**/CsvTableScan.java</srcExcludesPattern>
+		<failOnError>false</failOnError>
+		<convention>${top.dir}src/main/config/jalopy.xml</convention>
+	      </configuration>
+      </plugin>
+
+      <!-- remove temporarily
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <configuration>
+              <configLocation>${top.dir}/src/main/config/checkstyle.xml</configLocation>
+              <suppressionsLocation>${top.dir}/src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
+              <consoleOutput>true</consoleOutput>
+              <headerLocation>${top.dir}/src/main/config/license-header.txt</headerLocation>
+              <failOnViolation>true</failOnViolation>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+            </configuration>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.16</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/dependencies/</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.2</version>
+          <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+  -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.4.1</version>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -1,0 +1,62 @@
+{
+  version: '1.0',
+  defaultSchema: 'WIKI',
+  schemas: [
+    {
+      name: 'WIKI',
+      type: 'custom',
+      factory: 'net.hydromatic.optiq.impl.web.WebSchemaFactory',
+      operand: {
+	tables: [ 
+		{
+			tableName: "RawStates",
+			url: "http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States"
+		},
+		{
+			tableName: "RawCities",
+			url: "http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population"
+		},
+		{
+			tableName: "Cities",
+			url: "http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
+			path: "#mw-content-text > table.wikitable.sortable",
+			index: 0,
+			fieldDefs: [
+			  {th: "2013 rank", name: "Rank", type: "int", pattern: "(\\d+)", matchGroup: 0},
+			  {th: "City", selector: "a", selectedElement: 0},
+			  {th: "State[5]", name: "State", selector: "a:eq(0)"},
+			  {th: "2013 estimate", name: "Population", type: "double"},
+			  {th: "2010 Census", skip: "true"},
+			  {th: "Change", skip: "true"},
+			  {th: "2013 land area", name: "Land Area (sq mi)", type: "double", selector: ":not(span)"},
+			  {th: "2013 population density", skip: "true"},
+			  {th: "ANSI", skip: "true"}
+			]
+		},
+		{
+			tableName: "States",
+			url: "http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States",
+			path: "#mw-content-text > table.wikitable.sortable",
+			index: 0,
+			fieldDefs: [
+			  {th: "State", selector: "a", selectedElement: 0},
+			  {th: "Population (2013 est)[8]", name: "Population", type: "double"},
+			  {th: "Statehood", type: "Date"}
+			]
+		},
+		{
+			tableName: "MileRun",
+			url: "http://en.wikipedia.org/wiki/Mile_run_world_record_progression",
+			fieldDefs: [
+			  {th: "Time", name: "RecordTime"},
+			  {th: "Auto", skip: "true"},
+			  {th: "Nationality", selector: "a", selectedElement: 0},
+			  {th: "Date", name: "RaceDate", type: "Date"}
+			]
+		}
+	]
+
+      }
+    }
+  ]
+}
