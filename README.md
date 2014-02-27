@@ -3,19 +3,20 @@ optiq-web
 
 Optiq adapter that reads HTML tables from URLs.
 
-Optiq-web is another simple example of how to connect <a
+Optiq-web is another simple demonstration of how to connect <a
 href="https://github.com/julianhyde/optiq">Optiq</a> to your own
 data source and quickly get a full SQL/JDBC interface.
 
-Based on the example <a href="https://github.com/julianhyde/optiq-csv">example (optiq-csv)</a>
+Based on the <a href="https://github.com/julianhyde/optiq-csv">example (optiq-csv)</a>
 provided by <a href="https://github.com/julianhyde">Julian Hyde</a>
 
 What it does
 ==================
 
-For example if you define:
-States - http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States
-Cities - http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population
+For instance if you define:
+
+* States - http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States
+* Cities - http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population
 
 You can then write a query like:
 ```SQL
