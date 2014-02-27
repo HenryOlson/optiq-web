@@ -74,7 +74,7 @@ As you can see, Optiq has a full SQL implementation that can efficiently
 query any data source.
 
 For a more leisurely walk through what Optiq can do and how it does it,
-try <a href="https://github.com/julianhyde/optiq/TUTORIAL.md">the Optiq Tutorial</a>.
+try <a href="https://github.com/julianhyde/optiq-csv/blob/master/TUTORIAL.md">the Optiq Tutorial</a>.
 
 Mapping tables
 ================
