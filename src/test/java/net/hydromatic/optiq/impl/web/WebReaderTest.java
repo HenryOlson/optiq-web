@@ -1,73 +1,48 @@
 package net.hydromatic.optiq.impl.web;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.Iterator;
 import java.util.List;
 
 
 /**
- * Unit test for WebReader.
+ * Unit tests for WebReader.
  */
-public class WebReaderTest extends TestCase {
+
+public class WebReaderTest {
+
     /**
-     * Create the test case
-     *
-     * @param testName name of the test case
+     * Test WebReader instantiation
      */
-    public WebReaderTest(String testName) {
-        super(testName);
+    @Test
+    public void testGoodWebReader() throws Exception {
+	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
+	    "table:eq(4)");
+	t.refresh();
     }
 
     /**
-     * @return the suite of tests being tested
+     * Test failed WebReader instantiation - bad URL
      */
-    public static Test suite() {
-        return new TestSuite(WebReaderTest.class);
+    @Test(expected=java.lang.Exception.class)
+    public void testWebReaderBadURL() throws Exception {
+	WebReader t = new WebReader("http://ex.wikipedia.org/wiki/List_of_United_States_cities_by_population",
+	    "table:eq(4)");
+	t.refresh();
+	fail("Exception was not thrown for bad URL in WebReader");
     }
 
     /**
-     * Test instantiation
+     * Test failed WebReadere instantiation - bad selector
      */
-    public void testGoodWebReader() {
-        try {
-            WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
-                    "table:eq(4)");
-            assertTrue(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    /**
-     * Test failed instantiation - bad URL
-     */
-    public void testBadURLWebReader() {
-        try {
-            WebReader t = new WebReader("http://ex.wikipedia.org/wiki/List_of_United_States_cities_by_population",
-                    "table:eq(4)");
-            t.refresh();
-            assertTrue(false);
-        } catch (Exception e) {
-            assertTrue(true);
-        }
-    }
-
-    /**
-     * Test failed instantiation - bad selector
-     */
-    public void testBadSelectorWebReader() {
-        try {
-            WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
-                    "fable:eq(4)");
-            t.refresh();
-            assertTrue(false);
-        } catch (Exception e) {
-            assertTrue(true);
-        }
+    @Test(expected=java.lang.Exception.class)
+    public void testWebReaderBadSelector() throws Exception {
+	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
+	    "fable:eq(4)");
+	t.refresh();
+	fail("Exception was not thrown for bad selector in WebReader");
     }
 
     /**
