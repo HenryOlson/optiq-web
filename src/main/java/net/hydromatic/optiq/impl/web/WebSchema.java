@@ -33,7 +33,6 @@ import java.util.*;
  */
 public class WebSchema extends AbstractSchema {
     private ArrayList<Map<String, Object>> tables;
-    private final boolean smart;
 
     /**
      * Creates an HTML tables schema.
@@ -48,7 +47,6 @@ public class WebSchema extends AbstractSchema {
         ArrayList<Map<String, Object>> tables, boolean smart) {
         super(parentSchema, name);
         this.tables = tables;
-        this.smart = smart;
     }
 
     @Override

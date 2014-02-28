@@ -28,7 +28,7 @@ import org.eigenbase.reltype.*;
 import java.util.*;
 
 /**
- * Relational expression representing a scan of a CSV file.
+ * Relational expression representing a scan of an HTML table.
  *
  * <p>Like any table scan, it serves as a leaf node of a query tree.</p>
  * <p>Trivially modified from CsvTableScan</p>
@@ -67,11 +67,6 @@ public class WebTableScan extends TableAccessRelBase implements EnumerableRel {
       builder.add(fieldList.get(field));
     }
     return builder.build();
-  }
-
-  @Override
-  public void register(RelOptPlanner planner) {
-    planner.addRule(WebPushProjectOntoTableRule.INSTANCE);
   }
 
   public Result implement(EnumerableRelImplementor implementor, Prefer pref) {
