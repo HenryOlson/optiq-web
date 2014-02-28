@@ -4,6 +4,11 @@ For a full list of releases, see <a href="https://github.com/HenryOlson/optiq-we
 
 ## <a href="https://github.com/HenryOlson/optiq-web/releases/tag/optiq-web-0.1">0.1</a> / 2014-02-28
 
+Initial Release
+
+Basic feature set for querying HTML tables with SQL.  Tables may be easily defined, then refined for better parsing and querying.
+Derived from an example (<a href="https://github.com/julianhyde/optiq-csv">optiq-csv</a>) by @julianhyde
+
 * Update release history
 * Built against optiq-0.4.18, linq4j-0.1.13, sqlline-1.1.7.
 * Configure pom.xml for initial release
@@ -13,5 +18,3 @@ For a full list of releases, see <a href="https://github.com/HenryOlson/optiq-we
 * Rename and redact other Csv*.java from example
 * Implement WebTable, WebEnumerator, RowParser to integrate with optiq
 * Implement WebReader using Jsoup to get table from URL
-* Derive from example (<a href="https://github.com/julianhyde/optiq-csv">optiq-csv</a>) by @julianhyde
-
