@@ -25,10 +25,10 @@
 
   <developers>
     <developer>
-      <id>henryolson</id>
+      <id>Henryolson</id>
       <name>Henry Olson</name>
       <email>henry.olson@gmail.com</email>
-      <url>https://github.com/henryolson</url>
+      <url>https://github.com/HenryOlson</url>
       <roles>
         <role>architect</role>
         <role>developer</role>
@@ -66,9 +66,9 @@
   <issueManagement />
 
   <scm>
-    <connection>scm:git:git://github.com/henryolson/optiq-web.git</connection>
-    <developerConnection>scm:git:git@github.com:henryolson/optiq-web.git</developerConnection>
-    <url>http://github.com/henryolson/optiq-web/tree/master</url>
+    <connection>scm:git:git://github.com/HenryOlson/optiq-web.git</connection>
+    <developerConnection>scm:git:git@github.com:HenryOlson/optiq-web.git</developerConnection>
+    <url>http://github.com/HenryOlson/optiq-web/tree/master</url>
     <tag>HEAD</tag>
   </scm>
 
