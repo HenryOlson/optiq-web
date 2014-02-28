@@ -64,8 +64,13 @@ sqlline> !describe "Cities"
 sqlline> SELECT * FROM "Cities";
 sqlline> !describe "States"
 sqlline> SELECT * FROM "States";
+```
+
+More examples in the form of a script:
+
+```bash
 sqlline> !quit
-$ ./sqlline <target/test-classes/webjoin.sql
+$ ./sqlline -f target/test-classes/webjoin.sql
 ```
 
 (On Windows, the command is `sqlline.bat`.)
