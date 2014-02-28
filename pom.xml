@@ -10,7 +10,7 @@
   <!-- More project information. -->
   <name>optiq-web</name>
   <description>Optiq provider that reads web (HTML tables.</description>
-  <url>http://github.com/henryolson/optiq-web</url>
+  <url>http://github.com/HenryOlson/optiq-web</url>
   <inceptionYear>2014</inceptionYear>
   <organization>
     <name>Henry Olson</name>
@@ -25,7 +25,7 @@
 
   <developers>
     <developer>
-      <id>Henryolson</id>
+      <id>HenryOlson</id>
       <name>Henry Olson</name>
       <email>henry.olson@gmail.com</email>
       <url>https://github.com/HenryOlson</url>
