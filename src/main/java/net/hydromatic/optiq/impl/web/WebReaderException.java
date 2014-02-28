@@ -17,13 +17,13 @@
 */
 package net.hydromatic.optiq.impl.web;
 
-import org.junit.runners.Suite;
-import org.junit.runner.RunWith;
-
 /**
- * Unit test suite for optiq-web.
+ * Indicates that the WebReader failed
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({WebReaderTest.class})
-public class AllTests {}
+public class WebReaderException extends Exception {
+	public WebReaderException(String message) {
+		super(message);
+	}
+}
 
+// End WebReaderException.java

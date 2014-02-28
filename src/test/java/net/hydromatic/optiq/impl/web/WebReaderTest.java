@@ -1,7 +1,26 @@
+/*
+// Licensed to Henry Olson under one or more contributor license
+// agreements. See the NOTICE file distributed with this work for
+// additional information regarding copyright ownership.
+//
+// Henry Olson licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at:
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+*/
 package net.hydromatic.optiq.impl.web;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import java.io.IOException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +36,7 @@ public class WebReaderTest {
      * Test WebReader instantiation
      */
     @Test
-    public void testGoodWebReader() throws Exception {
+    public void testGoodWebReader() throws WebReaderException, IOException {
 	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
 	    "table:eq(4)");
 	t.refresh();
@@ -26,23 +45,21 @@ public class WebReaderTest {
     /**
      * Test failed WebReader instantiation - bad URL
      */
-    @Test(expected=java.lang.Exception.class)
-    public void testWebReaderBadURL() throws Exception {
+    @Test(expected=java.net.UnknownHostException.class)
+    public void testWebReaderBadURL() throws WebReaderException, IOException {
 	WebReader t = new WebReader("http://ex.wikipedia.org/wiki/List_of_United_States_cities_by_population",
 	    "table:eq(4)");
 	t.refresh();
-	fail("Exception was not thrown for bad URL in WebReader");
     }
 
     /**
-     * Test failed WebReadere instantiation - bad selector
+     * Test failed WebReader instantiation - bad selector
      */
-    @Test(expected=java.lang.Exception.class)
-    public void testWebReaderBadSelector() throws Exception {
+    @Test(expected=net.hydromatic.optiq.impl.web.WebReaderException.class)
+    public void testWebReaderBadSelector() throws WebReaderException, IOException {
 	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
 	    "fable:eq(4)");
 	t.refresh();
-	fail("Exception was not thrown for bad selector in WebReader");
     }
 
     /**

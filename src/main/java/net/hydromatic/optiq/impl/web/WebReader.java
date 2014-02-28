@@ -29,7 +29,6 @@ import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,9 +50,9 @@ public class WebReader {
     private Elements headings;
 
     public WebReader(String url, String path, Integer index)
-        throws Exception, IOException {
+        throws WebReaderException, IOException {
         if (url == null) {
-            throw new Exception("URL must not be null");
+            throw new WebReaderException("URL must not be null");
         }
 
         this.url = url;
@@ -61,15 +60,15 @@ public class WebReader {
         this.index = index;
     }
 
-    public WebReader(String url, String path) throws Exception, IOException {
+    public WebReader(String url, String path) throws WebReaderException, IOException {
         this(url, path, null);
     }
 
-    public WebReader(String url) throws Exception, IOException {
+    public WebReader(String url) throws WebReaderException, IOException {
         this(url, null, null);
     }
 
-    private void getTable() throws Exception, IOException {
+    private void getTable() throws WebReaderException, IOException {
         //System.out.println(">>> WebReader.getTable() - " + tableKey());
 
         Document doc = Jsoup.connect(this.url).get();
@@ -78,7 +77,7 @@ public class WebReader {
     }
 
     private Element getSelectedTable(Document doc, String path)
-        throws Exception {
+        throws WebReaderException {
         // get selected elements
         Elements list = doc.select(path);
 
@@ -87,7 +86,7 @@ public class WebReader {
 
         if (this.index == null) {
             if (list.size() != 1) {
-                throw new Exception("" + list.size() +
+                throw new WebReaderException("" + list.size() +
                     " HTML element(s) selected");
             }
 
@@ -100,12 +99,12 @@ public class WebReader {
         if (el.tag().getName().equals("table")) {
             return el;
         } else {
-            throw new Exception("selected (" + path + ") element is a " +
+            throw new WebReaderException("selected (" + path + ") element is a " +
                 el.tag().getName() + ", not a table");
         }
     }
 
-    private Element getBestTable(Document doc) throws Exception {
+    private Element getBestTable(Document doc) throws WebReaderException {
         Element bestTable = null;
         int bestScore = -1;
 
@@ -121,21 +120,21 @@ public class WebReader {
         }
 
         if (bestTable == null) {
-            throw new Exception("no tables found");
+            throw new WebReaderException("no tables found");
         }
 
         return bestTable;
     }
 
-    public void refresh() throws Exception, IOException {
+    public void refresh() throws WebReaderException, IOException {
         getTable();
     }
 
-    public void rewind() throws Exception, IOException {
+    public void rewind() throws WebReaderException, IOException {
         this.iterator();
     }
 
-    public Elements getHeadings() throws Exception, IOException {
+    public Elements getHeadings() throws WebReaderException, IOException {
 
         if (this.headings == null) {
             this.iterator();
@@ -148,7 +147,7 @@ public class WebReader {
         return "Table: {url: " + this.url + ", path: " + this.path;
     }
 
-    public WebReaderIterator iterator() throws Exception, IOException {
+    public WebReaderIterator iterator() throws WebReaderException, IOException {
         if (this.tableElement == null) {
             getTable();
         }
@@ -159,7 +158,7 @@ public class WebReader {
         return this.iterator;
     }
 
-    public List<Elements> readAll() throws Exception, IOException {
+    public List<Elements> readAll() throws WebReaderException, IOException {
         WebReader.WebReaderIterator rows = this.iterator();
         ArrayList<Elements> allRows = new ArrayList();
 
@@ -171,7 +170,7 @@ public class WebReader {
         return allRows;
     }
 
-    public Elements readNext() throws Exception, IOException {
+    public Elements readNext() throws WebReaderException, IOException {
         if (this.iterator == null) {
             iterator();
         }
@@ -180,8 +179,6 @@ public class WebReader {
             return this.iterator.next();
         } else {
             return null;
-
-            //throw new IOException("No more rows");
         }
     }
 
