@@ -18,13 +18,17 @@
 package net.hydromatic.optiq.impl.web;
 
 import org.junit.Test;
+import org.junit.Assume;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import java.net.Socket;
+
 import java.util.Iterator;
 import java.util.List;
 
+import org.jsoup.select.Elements;
 
 /**
  * Unit tests for WebReader.
@@ -32,12 +36,60 @@ import java.util.List;
 
 public class WebReaderTest {
 
+    private static final String testHost = "en.wikipedia.org";
+
+    private boolean hazNetwork() {
+	Socket socket = null;
+	boolean reachable = false;
+	try {
+	    socket = new Socket(this.testHost, 80);
+	    reachable = true;
+	} catch (Exception e) {
+		// do nothing
+	} finally {            
+	    if (socket != null) try { socket.close(); } catch(IOException e) {}
+	}
+	return reachable;
+    }
+
     /**
-     * Test WebReader instantiation
+     * Test WebReader URL instantiation - no path
      */
     @Test
-    public void testGoodWebReader() throws WebReaderException, IOException {
+    public void testWebReaderURLNoPath() throws WebReaderException, IOException {
+	Assume.assumeTrue(hazNetwork());
+	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States");
+	t.refresh();
+    }
+
+    /**
+     * Test WebReader URL instantiation - with path
+     */
+    @Test
+    public void testWebReaderURLWithPath() throws WebReaderException, IOException {
+	Assume.assumeTrue(hazNetwork());
 	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
+		"#mw-content-text > table.wikitable.sortable", new Integer(0));
+	t.refresh();
+    }
+
+    /**
+     * Test WebReader URL fetch
+     */
+    @Test
+    public void testWebReaderURLFetch() throws WebReaderException, IOException {
+	Assume.assumeTrue(hazNetwork());
+	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States");
+	List<Elements> all = t.readAll();
+	assertTrue(all.size() == 50);
+    }
+
+    /**
+     * Test failed WebReader instantiation - malformed URL
+     */
+    @Test(expected=net.hydromatic.optiq.impl.web.WebReaderException.class)
+    public void testWebReaderMalURL() throws WebReaderException, IOException {
+	WebReader t = new WebReader("badproto://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
 	    "table:eq(4)");
 	t.refresh();
     }
@@ -57,109 +109,88 @@ public class WebReaderTest {
      */
     @Test(expected=net.hydromatic.optiq.impl.web.WebReaderException.class)
     public void testWebReaderBadSelector() throws WebReaderException, IOException {
-	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
-	    "fable:eq(4)");
+	WebReader t = new WebReader("file:target/test-classes/tableOK.html", "table:eq(1)");
 	t.refresh();
     }
 
     /**
-     * Test iterator (Cities)
+     * Test WebReader with static file - headings
      */
-
-    /*
-        public void testWebReaderIterator() {
-            try {
-                    WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
-                                    "#mw-content-text > table.wikitable.sortable", 0);
-
-                    WebReader.WebReaderIterator rows = t.iterator();
-                    while(rows.hasNext()) {
-                            String[] cols = rows.next();
-                            System.out.print(cols[0] + ", ");
-                            System.out.print(cols[1] + ", ");
-                            System.out.print(cols[2]);
-                            System.out.println();
-                    }
-                    assertTrue(true);
-            } catch (Exception e) {
-                    assertTrue(false);
-            }
-        }
-        /**
-         * Test readAll (Cities)
-         */
-
-    /*
-        public void testWebReaderReadAll() {
-            try {
-                    WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
-                                    "#mw-content-text > table.wikitable.sortable", 0);
-
-                    List <String[]> allRows = t.readAll();
-                    Iterator <String[]> rows = allRows.iterator();
-                    while(rows.hasNext()) {
-                            String[] cols = rows.next();
-                            System.out.print(cols[0] + ", ");
-                            System.out.print(cols[1] + ", ");
-                            System.out.print(cols[2]);
-                            System.out.println();
-                    }
-                    assertTrue(true);
-            } catch (Exception e) {
-                    e.printStackTrace();
-                    assertTrue(false);
-            }
-        }
-    */
+    @Test
+    public void testWebReaderHeadings() throws WebReaderException, IOException {
+	WebReader t = new WebReader("file:target/test-classes/tableOK.html");
+	Elements headings = t.getHeadings();
+	assertTrue(headings.get(1).text().equals("H1"));
+    }
 
     /**
-     * Test iterator again (aircraft carriers)
+     * Test WebReader with static file - data
      */
-
-    /*
-        public void testWebReaderIteratorAgain() {
-            try {
-                    WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service",
-                                    "#mw-content-text > table.wikitable.sortable", 1);
-
-                    WebReader.WebReaderIterator rows = t.iterator();
-                    while(rows.hasNext()) {
-                            String[] cols = rows.next();
-                            System.out.print(cols[0] + ", ");
-                            System.out.print(cols[1] + ", ");
-                            System.out.print(cols[2]);
-                            System.out.println();
-                    }
-                    assertTrue(true);
-            } catch (Exception e) {
-                    e.printStackTrace();
-                    assertTrue(false);
-            }
-        }
-    */
+    @Test
+    public void testWebReaderData() throws WebReaderException, IOException {
+	WebReader t = new WebReader("file:target/test-classes/tableOK.html");
+	Elements row = t.readNext();
+	assertTrue(row.get(2).text().equals("R0C2"));
+	row = t.readNext();
+	assertTrue(row.get(0).text().equals("R1C0"));
+    }
 
     /**
-     * Test readNext (aircraft carriers)
+     * Test WebReader with bad static file - headings
      */
+    @Test
+    public void testWebReaderHeadingsBadFile() throws WebReaderException, IOException {
+	WebReader t = new WebReader("file:target/test-classes/tableNoTheadTbody.html");
+	Elements headings = t.getHeadings();
+	assertTrue(headings.get(1).text().equals("H1"));
+    }
 
-    /*
-        public void testWebReaderReadNext() {
-            WebReader t;
-            try {
-                    t = new WebReader("http://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service",
-                                    "#mw-content-text > table.wikitable.sortable", 1);
-                    String[] cols;
-                    while((cols = t.readNext()) != null) {
-                            System.out.print(cols[0] + ", ");
-                            System.out.print(cols[1] + ", ");
-                            System.out.print(cols[2]);
-                            System.out.println();
-                    }
-                    assertTrue(true);
-            } catch (Exception e) {
-                    e.printStackTrace();
-                    assertTrue(false);
-            }
-        }
-    */
+    /**
+     * Test WebReader with bad static file - data
+     */
+    @Test
+    public void testWebReaderDataBadFile() throws WebReaderException, IOException {
+	WebReader t = new WebReader("file:target/test-classes/tableNoTheadTbody.html");
+	Elements row = t.readNext();
+	assertTrue(row.get(2).text().equals("R0C2"));
+	row = t.readNext();
+	assertTrue(row.get(0).text().equals("R1C0"));
+    }
+
+    /**
+     * Test WebReader with no headings static file - data
+     */
+    @Test(expected=net.hydromatic.optiq.impl.web.WebReaderException.class)
+    public void testWebReaderDataNoTH() throws WebReaderException, IOException {
+	WebReader t = new WebReader("file:target/test-classes/tableNoTH.html");
+	Elements row = t.readNext();
+	assertTrue(row.get(2).text().equals("R0C2"));
+    }
+
+    /**
+     * Test WebReader iterator with static file
+     */
+    @Test
+    public void testWebReaderIterator() throws WebReaderException, IOException {
+	WebReader t = new WebReader("file:target/test-classes/tableOK.html");
+	Elements row = null;
+	WebReader.WebReaderIterator rows = t.iterator();
+	while(rows.hasNext()) {
+		row = rows.next();
+	}
+	assertFalse(row == null);
+	assertTrue(row.get(1).text().equals("R2C1"));
+    }
+
+    /**
+     * Test WebReader readAll with static file
+     */
+    @Test
+    public void testWebReaderReadAll() throws WebReaderException, IOException {
+	WebReader t = new WebReader("file:target/test-classes/tableOK.html");
+	Elements row = null;
+	List<Elements> all = t.readAll();
+	assertTrue(all.get(1).get(2).text().equals("R1C2"));
+    }
+
 }

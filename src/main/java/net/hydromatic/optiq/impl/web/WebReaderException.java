@@ -24,6 +24,9 @@ public class WebReaderException extends Exception {
 	public WebReaderException(String message) {
 		super(message);
 	}
+	public WebReaderException(String message, Throwable e) {
+		super(message, e);
+	}
 }
 
 // End WebReaderException.java

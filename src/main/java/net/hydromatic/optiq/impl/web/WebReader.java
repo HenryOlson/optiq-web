@@ -17,8 +17,6 @@
 */
 package net.hydromatic.optiq.impl.web;
 
-import com.google.common.base.Joiner;
-
 import org.jsoup.Jsoup;
 
 import org.jsoup.nodes.Document;
@@ -29,11 +27,14 @@ import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.File;
+
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 
 /*
  * WebReader - scrapes HTML tables off of URLs
@@ -42,9 +43,13 @@ import java.util.List;
  *
  */
 public class WebReader {
-    private String url;
+
+    private static final String DEFAULT_CHARSET = "UTF-8";
+
+    private URL url;
     private String path;
     private Integer index;
+    private String charset = DEFAULT_CHARSET;
     private Element tableElement;
     private WebReaderIterator iterator;
     private Elements headings;
@@ -55,7 +60,11 @@ public class WebReader {
             throw new WebReaderException("URL must not be null");
         }
 
-        this.url = url;
+	try {
+		this.url = new URL(url);
+	} catch (MalformedURLException e) {
+		throw new WebReaderException("Malformed URL: '" + url + "'", e);
+	}
         this.path = path;
         this.index = index;
     }
@@ -69,11 +78,18 @@ public class WebReader {
     }
 
     private void getTable() throws WebReaderException, IOException {
-        //System.out.println(">>> WebReader.getTable() - " + tableKey());
 
-        Document doc = Jsoup.connect(this.url).get();
+	Document doc;
+	String proto = this.url.getProtocol();
+	if(proto.equals("file")) {
+		doc = Jsoup.parse(new File(this.url.getFile()), this.charset);
+	} else {
+		doc = Jsoup.connect(this.url.toString()).get();
+	}
+
         this.tableElement = ((this.path != null)
             ? getSelectedTable(doc, this.path) : getBestTable(doc));
+
     }
 
     private Element getSelectedTable(Document doc, String path)
@@ -153,7 +169,18 @@ public class WebReader {
         }
 
         this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
-        this.headings = this.iterator.next();
+	
+	// first row must contain headings
+	Elements headings = this.iterator.next("th");
+	if(headings.size() == 0) {
+		throw new WebReaderException("No headings on table");
+	}
+/*
+	for(Element th : headings) {
+		System.out.println("Heading: '" + th.text() + "'");
+	}
+*/
+        this.headings = headings;
 
         return this.iterator;
     }
@@ -196,10 +223,15 @@ public class WebReader {
             return this.rowIterator.hasNext();
         }
 
-        public Elements next() {
+        public Elements next(String selector) {
             Element row = this.rowIterator.next();
 
-            return row.select("td,th");
+            return row.select(selector);
+        }
+
+	// return th and td elements by default
+        public Elements next() {
+		return next("th,td");
         }
 
         public void remove() {
