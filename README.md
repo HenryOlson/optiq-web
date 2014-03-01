@@ -75,6 +75,8 @@ $ ./sqlline -f target/test-classes/webjoin.sql
 
 (On Windows, the command is `sqlline.bat`.)
 
+NB: When running the above script (webjoin.sql) you will see a number of warning messages for each query containing a join.  These are expected and do not affect query results.  These messages will be suppressed in the next release.
+
 As you can see, Optiq has a full SQL implementation that can efficiently
 query any data source.
 
