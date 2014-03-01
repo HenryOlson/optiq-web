@@ -102,18 +102,20 @@ And subsequently refined for better usability / querying:
 	path: "#mw-content-text > table.wikitable.sortable",
 	index: 0,
 	fieldDefs: [
-	  {th: "2013 rank", name: "Rank", type: "int", pattern: "(\\d+)", matchGroup: 0},
+	  {th: "2012 rank", name: "Rank", type: "int", pattern: "(\\d+)", matchGroup: 0},
 	  {th: "City", selector: "a", selectedElement: 0},
 	  {th: "State[5]", name: "State", selector: "a:eq(0)"},
-	  {th: "2013 estimate", name: "Population", type: "double"},
+	  {th: "2012 estimate", name: "Population", type: "double"},
 	  {th: "2010 Census", skip: "true"},
 	  {th: "Change", skip: "true"},
-	  {th: "2013 land area", name: "Land Area (sq mi)", type: "double", selector: ":not(span)"},
-	  {th: "2013 population density", skip: "true"},
+	  {th: "2012 land area", name: "Land Area (sq mi)", type: "double", selector: ":not(span)"},
+	  {th: "2012 population density", skip: "true"},
 	  {th: "ANSI", skip: "true"}
 	]
 },
 ```
+
+NB: The above examples (exerpted from src/test/resources/wiki.json) are subject to the whims of the Wikipedia editors.  In particular, the column headings referencing dates (e.g. '2013 rank') are subject to change.  If so, this may cause issues with the execution of the webjoin.sql script in the script demo above.
 
 More information
 ================
