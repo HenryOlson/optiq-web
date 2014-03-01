@@ -1,7 +1,7 @@
 optiq-web
 ============
 
-Optiq adapter that reads HTML tables from URLs.
+Optiq adapter which reads HTML tables from URLs.
 
 Optiq-web is another simple demonstration of how to connect <a
 href="https://github.com/julianhyde/optiq">Optiq</a> to your own
@@ -27,7 +27,7 @@ from "Cities" c, "States" s
 where c."State" = s."State" and s."State" = 'California';
 ```
 
-And get an answer like this:
+And learn that California has 69 cities of 100k or more coprising almost 1/2 of the state's population:
 ```
 +---------------------+----------------------+
 |     City Count      | Pct State Population |
@@ -64,12 +64,12 @@ sqlline> !describe "Cities"
 sqlline> SELECT * FROM "Cities";
 sqlline> !describe "States"
 sqlline> SELECT * FROM "States";
+sqlline> !quit
 ```
 
 More examples in the form of a script:
 
 ```bash
-sqlline> !quit
 $ ./sqlline -f target/test-classes/webjoin.sql
 ```
 
