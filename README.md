@@ -115,7 +115,7 @@ And subsequently refined for better usability / querying:
 },
 ```
 
-NB: The above examples (exerpted from src/test/resources/wiki.json) are subject to the whims of the Wikipedia editors.  In particular, the column headings referencing dates (e.g. '2013 rank') are subject to change.  If so, this may cause issues with the execution of the webjoin.sql script in the script demo above.
+NB: The above examples (exerpted from src/test/resources/wiki.json) are subject to the whims of the Wikipedia editors.  In particular, the column headings referencing dates (e.g. '2012 rank') are likely to change.  Such changes may cause issues with the execution of the webjoin.sql script in the script demo above.
 
 More information
 ================
