@@ -11,6 +11,10 @@
 		{
 			tableName: "T1",
 			url: "file:target/test-classes/tableOK.html"
+		},
+		{
+			tableName: "T1_NO_TH",
+			url: "file:target/test-classes/tableNoTH.html"
 		}
 	]
 

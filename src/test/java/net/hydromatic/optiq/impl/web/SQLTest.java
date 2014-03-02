@@ -45,6 +45,17 @@ public class SQLTest {
   }
 
   /**
+   * Reads from a local file without table headers <TH> and checks the result
+   */
+  @Test
+  public void testNoTHSelect() throws SQLException {
+    Assume.assumeTrue(AllTests.hazNetwork());
+    checkSql("testModel", "select \"col1\" from T1_NO_TH where \"col0\" like 'R0%'",
+	"col1=R0C1\n");
+  }
+
+
+  /**
    * Reads from a URL and checks the result
    */
   @Test

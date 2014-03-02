@@ -172,14 +172,23 @@ public class WebReader {
 	
 	// first row must contain headings
 	Elements headings = this.iterator.next("th");
+	// if not, generate some default column names
 	if(headings.size() == 0) {
-		throw new WebReaderException("No headings on table");
+		//throw new WebReaderException("No headings on table");
+		// rewind and peek at the first row of data
+		this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
+		Elements firstRow = this.iterator.next("td");
+		int i=0;
+		headings = new Elements();
+		for(Element td : firstRow) {
+			Element th = td.clone();
+			th.tagName("th");
+			th.html("col" + i++);
+			headings.add(th);
+		}
+		// rewind, so queries see the first row
+		this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
 	}
-/*
-	for(Element th : headings) {
-		System.out.println("Heading: '" + th.text() + "'");
-	}
-*/
         this.headings = headings;
 
         return this.iterator;

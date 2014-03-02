@@ -160,7 +160,7 @@ public class WebReaderTest {
     /**
      * Test WebReader with no headings static file - data
      */
-    @Test(expected=net.hydromatic.optiq.impl.web.WebReaderException.class)
+    @Test
     public void testWebReaderDataNoTH() throws WebReaderException, IOException {
 	WebReader t = new WebReader("file:target/test-classes/tableNoTH.html");
 	Elements row = t.readNext();
