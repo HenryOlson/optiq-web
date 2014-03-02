@@ -57,7 +57,7 @@ public class WebReaderTest {
      */
     @Test
     public void testWebReaderURLNoPath() throws WebReaderException, IOException {
-	Assume.assumeTrue(hazNetwork());
+	Assume.assumeTrue(AllTests.hazNetwork());
 	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States");
 	t.refresh();
     }
@@ -67,7 +67,7 @@ public class WebReaderTest {
      */
     @Test
     public void testWebReaderURLWithPath() throws WebReaderException, IOException {
-	Assume.assumeTrue(hazNetwork());
+	Assume.assumeTrue(AllTests.hazNetwork());
 	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
 		"#mw-content-text > table.wikitable.sortable", new Integer(0));
 	t.refresh();
@@ -78,7 +78,7 @@ public class WebReaderTest {
      */
     @Test
     public void testWebReaderURLFetch() throws WebReaderException, IOException {
-	Assume.assumeTrue(hazNetwork());
+	Assume.assumeTrue(AllTests.hazNetwork());
 	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States");
 	List<Elements> all = t.readAll();
 	assertTrue(all.size() == 50);

@@ -1,0 +1,20 @@
+{
+  version: '1.0',
+  defaultSchema: 'TEST',
+  schemas: [
+    {
+      name: 'TEST',
+      type: 'custom',
+      factory: 'net.hydromatic.optiq.impl.web.WebSchemaFactory',
+      operand: {
+	tables: [
+		{
+			tableName: "T1",
+			url: "file:target/test-classes/tableOK.html"
+		}
+	]
+
+      }
+    }
+  ]
+}
