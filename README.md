@@ -78,10 +78,10 @@ $ ./sqlline -f target/test-classes/webjoin.sql
 NB: When running the above script (webjoin.sql) you will see a number of warning messages for each query containing a join.  These are expected and do not affect query results.  These messages will be suppressed in the next release.
 
 As you can see, Optiq has a full SQL implementation that can efficiently
-query any data source.  For more on Optiq's SQL syntax, see the <a href="https://github.com/julianhyde/optiq-csv/blob/master/REFERENCE.md">Optiq SQL Reference</a>
+query any data source.  For more on Optiq's SQL syntax, see the <a href="https://github.com/julianhyde/optiq/blob/master/REFERENCE.md">Optiq SQL Reference</a>
 
 For a more complete walk through what Optiq can do and how it does it,
-try the <a href="https://github.com/julianhyde/optiq/blob/master/TUTORIAL.md">Optiq Tutorial</a>.
+try the <a href="https://github.com/julianhyde/optiq-csv/blob/master/TUTORIAL.md">Optiq Tutorial</a>.
 
 Mapping tables
 ================
