@@ -19,8 +19,9 @@ package net.hydromatic.optiq.impl.web;
 
 import net.hydromatic.linq4j.function.Function1;
 
-import org.junit.Test;
 import org.junit.Assume;
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.io.PrintStream;
@@ -32,9 +33,7 @@ import java.util.Properties;
  */
 public class SQLTest {
 
-  /*
-   * tests
-   */
+  // tests
 
   /**
    * Reads from a local file and checks the result
@@ -51,7 +50,7 @@ public class SQLTest {
   public void testNoTHSelect() throws SQLException {
     Assume.assumeTrue(AllTests.hazNetwork());
     checkSql("testModel", "select \"col1\" from T1_NO_TH where \"col0\" like 'R0%'",
-	"col1=R0C1\n");
+        "col1=R0C1\n");
   }
 
   /**
@@ -60,7 +59,7 @@ public class SQLTest {
   @Test
   public void testFindBiggerNoTH() throws SQLException {
     checkSql("testModel", "select \"col4\" from TABLEX2 where \"col0\" like 'R1%'",
-	"col4=R1C4\n");
+        "col4=R1C4\n");
   }
 
   /**
@@ -70,12 +69,10 @@ public class SQLTest {
   public void testURLSelect() throws SQLException {
     Assume.assumeTrue(AllTests.hazNetwork());
     checkSql("wiki", "select \"State\", \"Statehood\" from \"States\" where \"State\" = 'California'",
-	"State=California; Statehood=1850-09-09\n");
+        "State=California; Statehood=1850-09-09\n");
   }
 
-  /*
-   * helper functions
-   */
+  // helper functions
 
   private void checkSql(String model, String sql) throws SQLException {
     checkSql(sql, model, new Function1<ResultSet, Void>() {
@@ -96,11 +93,11 @@ public class SQLTest {
       public Void apply(ResultSet resultSet) {
         try {
           String actual = SQLTest.toString(resultSet);
-	  if(!expected.equals(actual)) {
-		System.out.println("Assertion failure:");
-		System.out.println("\tExpected: '" + expected + "'");
-		System.out.println("\tActual: '" + actual + "'");
-	  }
+          if (!expected.equals(actual)) {
+                System.out.println("Assertion failure:");
+                System.out.println("\tExpected: '" + expected + "'");
+                System.out.println("\tActual: '" + actual + "'");
+          }
           assertTrue(expected.equals(actual));
         } catch (SQLException e) {
           throw new RuntimeException(e);

@@ -1,9 +1,9 @@
 /*
-// Licensed to Julian Hyde under one or more contributor license
+// Licensed to Henry Olson under one or more contributor license
 // agreements. See the NOTICE file distributed with this work for
 // additional information regarding copyright ownership.
 //
-// Julian Hyde licenses this file to you under the Apache License,
+// Henry Olson licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except in
 // compliance with the License. You may obtain a copy of the License at:
 //
@@ -17,9 +17,9 @@
 */
 package net.hydromatic.optiq.impl.web;
 
-import net.hydromatic.linq4j.expressions.Primitive;
-
 import net.hydromatic.optiq.impl.java.JavaTypeFactory;
+
+import net.hydromatic.linq4j.expressions.Primitive;
 
 import org.eigenbase.reltype.RelDataType;
 
@@ -34,7 +34,8 @@ import java.util.Map;
  * makes it easier to write SQL.</p>
  * <p>Trivially modified from CsvFieldType</p>
  */
-enum WebFieldType {STRING(null, String.class),
+enum WebFieldType {
+    STRING(null, String.class),
     BOOLEAN(Primitive.BOOLEAN),
     BYTE(Primitive.BYTE),
     CHAR(Primitive.CHAR),
@@ -49,7 +50,7 @@ enum WebFieldType {STRING(null, String.class),
 
     private final Primitive primitive;
     private final Class clazz;
-    private static final Map<String,WebFieldType> MAP = new HashMap<String,WebFieldType>();
+    private static final Map<String, WebFieldType> MAP = new HashMap<String, WebFieldType>();
 
     static {
         for (WebFieldType value : values()) {

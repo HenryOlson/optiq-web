@@ -17,27 +17,19 @@
 */
 package net.hydromatic.optiq.impl.web;
 
-import net.hydromatic.linq4j.*;
-
 import net.hydromatic.optiq.*;
 import net.hydromatic.optiq.impl.AbstractTableQueryable;
 import net.hydromatic.optiq.impl.java.AbstractQueryableTable;
-import net.hydromatic.optiq.impl.java.JavaTypeFactory;
-import net.hydromatic.optiq.impl.web.WebEnumerator;
 import net.hydromatic.optiq.rules.java.EnumerableConvention;
 import net.hydromatic.optiq.rules.java.JavaRules;
+
+import net.hydromatic.linq4j.*;
 
 import org.eigenbase.rel.RelNode;
 
 import org.eigenbase.relopt.RelOptTable;
 
 import org.eigenbase.reltype.*;
-
-import org.eigenbase.util.Pair;
-
-import org.jsoup.nodes.Element;
-
-import org.jsoup.select.Elements;
 
 import java.io.*;
 

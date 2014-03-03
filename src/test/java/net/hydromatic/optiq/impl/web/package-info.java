@@ -15,32 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 */
-package net.hydromatic.optiq.impl.web;
-
-import net.hydromatic.optiq.*;
-
-import java.util.ArrayList;
-import java.util.Map;
-
 
 /**
- * Factory that creates a {@link WebSchema}.
+ * Optiq query provider that reads from web tables (HTML).
  *
- * <p>Allows a custom schema to be included in a model.json file.</p>
+ * <p>An optiq schema that maps onto multiple URLs / HTML Tables.
+ * Each HTML table appears as a table.  Full select SQL operations are available on
+ * those tables.</p>
  */
-@SuppressWarnings("UnusedDeclaration")
-public class WebSchemaFactory implements SchemaFactory {
-    // public constructor, per factory contract
-    public WebSchemaFactory() {
-    }
+package net.hydromatic.optiq.impl.web;
 
-    public Schema create(SchemaPlus parentSchema, String name,
-        Map<String, Object> operand) {
-        ArrayList tables = (ArrayList) operand.get("tables");
-        Boolean smart = (Boolean) operand.get("smart");
-
-        return new WebSchema(parentSchema, name, tables,
-            (smart != null) && smart);
-    }
-}
-// End WebSchemaFactory.java
+// End package-info.java

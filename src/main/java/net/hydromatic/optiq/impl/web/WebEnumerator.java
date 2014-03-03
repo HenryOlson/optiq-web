@@ -17,47 +17,28 @@
 */
 package net.hydromatic.optiq.impl.web;
 
-import com.google.common.base.Joiner;
-
-import com.joestelmach.natty.*;
+import net.hydromatic.optiq.impl.java.JavaTypeFactory;
 
 import net.hydromatic.linq4j.Enumerator;
-
-import net.hydromatic.optiq.impl.AbstractTableQueryable;
-import net.hydromatic.optiq.impl.java.AbstractQueryableTable;
-import net.hydromatic.optiq.impl.java.JavaTypeFactory;
-import net.hydromatic.optiq.rules.java.EnumerableConvention;
-import net.hydromatic.optiq.rules.java.JavaRules;
-
-import org.eigenbase.rel.RelNode;
-
-import org.eigenbase.relopt.RelOptTable;
 
 import org.eigenbase.reltype.*;
 
 import org.eigenbase.util.Pair;
 
-import org.jsoup.Jsoup;
+import com.google.common.base.Joiner;
 
-import org.jsoup.nodes.Document;
+import com.joestelmach.natty.*;
+
 import org.jsoup.nodes.Element;
-
-import org.jsoup.parser.Tag;
-
 import org.jsoup.select.Elements;
 
 import java.io.*;
-
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -101,13 +82,11 @@ class WebEnumerator implements Enumerator<Object> {
         this.fields = fields;
     }
 
-    /*
-     * defaultFields() - support lazy initialization - avoid unnecessary reads
-     */
+    // defaultFields() - support lazy initialization - avoid unnecessary reads
     private void defaultFields() {
-	if(this.fields == null) {
-		this.fields = identityList(this.rowParser.width());
-	}
+        if (this.fields == null) {
+            this.fields = identityList(this.rowParser.width());
+        }
     }
 
     public Object current() {
@@ -115,7 +94,7 @@ class WebEnumerator implements Enumerator<Object> {
     }
 
     public boolean moveNext() {
-	defaultFields();
+    defaultFields();
         try {
             final Elements row = this.webReader.readNext();
 
@@ -352,28 +331,25 @@ class WebEnumerator implements Enumerator<Object> {
 
     private class RowParser {
 
-	// cache for lazy initialization
-	private WebReader webReader;
-	private ArrayList<Map<String, Object>> fieldConfigs;
-	private boolean initialized = false;
+    // cache for lazy initialization
+    private WebReader webReader;
+    private ArrayList<Map<String, Object>> fieldConfigs;
+    private boolean initialized = false;
 
         private ArrayList<FieldDef> fieldDefs;
         private ArrayList<Integer> validFields;
 
         public RowParser(WebReader webReader,
             ArrayList<Map<String, Object>> fieldConfigs) {
-		this.webReader = webReader;
-		this.fieldConfigs = fieldConfigs;
-	}
+        this.webReader = webReader;
+        this.fieldConfigs = fieldConfigs;
+    }
 
-	/*
-  	 * initialize() - object initialization is separate to avoid unnecessary URL reads
-  	 *
-  	 */
-	private void initialize() {
-	    if(this.initialized) {
-		return;
-	    }
+    // initialize() - object initialization is separate to avoid unnecessary URL reads
+    private void initialize() {
+            if (this.initialized) {
+                return;
+            }
             this.fieldDefs = new ArrayList<FieldDef>();
             this.validFields = new ArrayList<Integer>();
 
@@ -426,7 +402,7 @@ class WebEnumerator implements Enumerator<Object> {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-	    this.initialized = true;
+            this.initialized = true;
         }
 
         private void addFieldDef(String name, WebFieldType type, boolean skip,
@@ -435,7 +411,7 @@ class WebEnumerator implements Enumerator<Object> {
         }
 
         public Object toRow(Elements rowElements, int[] fields) {
-	    initialize();
+            initialize();
             final Object[] objects = new Object[fields.length];
 
             for (int i = 0; i < fields.length; i++) {
@@ -449,12 +425,12 @@ class WebEnumerator implements Enumerator<Object> {
         }
 
         public int width() {
-	    initialize();
+            initialize();
             return this.validFields.size();
         }
 
         public RelDataType getRowType(JavaTypeFactory typeFactory) {
-	    initialize();
+            initialize();
             List<String> names = new ArrayList<String>();
             List<RelDataType> types = new ArrayList<RelDataType>();
 

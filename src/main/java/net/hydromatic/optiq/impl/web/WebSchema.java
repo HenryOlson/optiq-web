@@ -1,9 +1,9 @@
 /*
-// Licensed to Julian Hyde  under one or more contributor license
+// Licensed to Henry Olson under one or more contributor license
 // agreements. See the NOTICE file distributed with this work for
 // additional information regarding copyright ownership.
 //
-// Julian Hyde  licenses this file to you under the Apache License,
+// Henry Olson licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except in
 // compliance with the License. You may obtain a copy of the License at:
 //
@@ -17,15 +17,14 @@
 */
 package net.hydromatic.optiq.impl.web;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.hydromatic.optiq.*;
 import net.hydromatic.optiq.impl.AbstractSchema;
+
+import com.google.common.collect.ImmutableMap;
 
 import java.io.*;
 
 import java.util.*;
-
 
 /**
  * Schema mapped onto a set of URLs / HTML tables. Each table in the schema
@@ -61,8 +60,7 @@ public class WebSchema extends AbstractSchema {
                 WebTable table = new WebTable(tableDef, null);
                 builder.put(tableName, table);
             } catch (Exception e) {
-                System.out.println("Unable to instantiate table for: " +
-                    tableName);
+                System.out.println("Unable to instantiate table for: " + tableName);
             }
         }
 

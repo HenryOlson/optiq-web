@@ -17,33 +17,40 @@
 */
 package net.hydromatic.optiq.impl.web;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 import java.io.IOException;
 
 import java.net.Socket;
-
-import org.junit.runners.Suite;
-import org.junit.runner.RunWith;
 
 /**
  * Unit test suite for optiq-web.
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({WebReaderTest.class, SQLTest.class})
+@Suite.SuiteClasses({ WebReaderTest.class, SQLTest.class })
 public class AllTests {
-    private static final String testHost = "en.wikipedia.org";
+
+    private static final String TEST_HOST = "en.wikipedia.org";
 
     static boolean hazNetwork() {
         Socket socket = null;
         boolean reachable = false;
         try {
-            socket = new Socket(AllTests.testHost, 80);
+            socket = new Socket(AllTests.TEST_HOST, 80);
             reachable = true;
         } catch (Exception e) {
                 // do nothing
-	} finally {
-                if (socket != null) try { socket.close(); } catch(IOException e) {}
-	}
-	return reachable;
+        } finally {
+                if (socket != null) {
+                        try {
+                            socket.close();
+                        } catch (IOException e) {
+                            // do nothing
+                        }
+                }
+        }
+        return reachable;
     }
 
 }
