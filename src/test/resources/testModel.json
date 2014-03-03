@@ -15,6 +15,10 @@
 		{
 			tableName: "T1_NO_TH",
 			url: "file:target/test-classes/tableNoTH.html"
+		},
+		{
+			tableName: "TABLEX2",
+			url: "file:target/test-classes/tableX2.html"
 		}
 	]
 

@@ -87,13 +87,14 @@ public class WebReader {
 		doc = Jsoup.connect(this.url.toString()).get();
 	}
 
-        this.tableElement = ((this.path != null)
+        this.tableElement = ((this.path != null && !this.path.equals(""))
             ? getSelectedTable(doc, this.path) : getBestTable(doc));
 
     }
 
     private Element getSelectedTable(Document doc, String path)
         throws WebReaderException {
+       
         // get selected elements
         Elements list = doc.select(path);
 
@@ -125,9 +126,11 @@ public class WebReader {
         int bestScore = -1;
 
         for (Element t : doc.select("table")) {
-            int cols = t.select("th").size();
             int rows = t.select("tr").size();
+            Element firstRow = t.select("tr").get(0);
+	    int cols = firstRow.select("th,td").size();
             int thisScore = rows * cols;
+	    //System.out.println("(Rows, Cols, Score): (" + rows + ", " + cols + ", " + thisScore + ")");
 
             if (thisScore > bestScore) {
                 bestTable = t;

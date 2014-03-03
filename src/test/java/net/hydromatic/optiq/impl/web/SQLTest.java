@@ -54,6 +54,14 @@ public class SQLTest {
 	"col1=R0C1\n");
   }
 
+  /**
+   * Reads from a local file - finds larger table even without <TH> elements
+   */
+  @Test
+  public void testFindBiggerNoTH() throws SQLException {
+    checkSql("testModel", "select \"col4\" from TABLEX2 where \"col0\" like 'R1%'",
+	"col4=R1C4\n");
+  }
 
   /**
    * Reads from a URL and checks the result

@@ -36,22 +36,6 @@ import org.jsoup.select.Elements;
 
 public class WebReaderTest {
 
-    private static final String testHost = "en.wikipedia.org";
-
-    private boolean hazNetwork() {
-	Socket socket = null;
-	boolean reachable = false;
-	try {
-	    socket = new Socket(this.testHost, 80);
-	    reachable = true;
-	} catch (Exception e) {
-		// do nothing
-	} finally {            
-	    if (socket != null) try { socket.close(); } catch(IOException e) {}
-	}
-	return reachable;
-    }
-
     /**
      * Test WebReader URL instantiation - no path
      */
@@ -79,7 +63,8 @@ public class WebReaderTest {
     @Test
     public void testWebReaderURLFetch() throws WebReaderException, IOException {
 	Assume.assumeTrue(AllTests.hazNetwork());
-	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States");
+	WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States",
+		"#mw-content-text > table.wikitable.sortable", 0);
 	List<Elements> all = t.readAll();
 	assertTrue(all.size() == 50);
     }
