@@ -17,8 +17,6 @@
 */
 package net.hydromatic.optiq.impl.web;
 
-import net.hydromatic.optiq.impl.java.JavaTypeFactory;
-
 import net.hydromatic.linq4j.Enumerator;
 
 import org.eigenbase.reltype.*;
@@ -43,22 +41,16 @@ class WebEnumerator implements Enumerator<Object> {
     private RelDataType rowType;
     private Object current;
 
-    public WebEnumerator(Iterator<Elements> iterator, WebRowConverter converter) throws Exception {
+    public WebEnumerator(Iterator<Elements> iterator, WebRowConverter converter) {
         this.iterator = iterator;
         this.converter = converter;
+        this.fields = identityList(this.converter.width());
     }
 
-    public WebEnumerator(Iterator<Elements> iterator,  WebRowConverter converter, int[] fields)
-        throws Exception {
-        this(iterator, converter);
+    public WebEnumerator(Iterator<Elements> iterator,  WebRowConverter converter, int[] fields) {
+        this.iterator = iterator;
+        this.converter = converter;
         this.fields = fields;
-    }
-
-    // defaultFields() - support lazy initialization - avoid unnecessary reads
-    private void defaultFields() {
-        if (this.fields == null) {
-            this.fields = identityList(this.converter.width());
-        }
     }
 
     public Object current() {
@@ -69,7 +61,6 @@ class WebEnumerator implements Enumerator<Object> {
     }
 
     public boolean moveNext() {
-        defaultFields();
         try {
             if (this.iterator.hasNext()) {
                 final Elements row = this.iterator.next();
@@ -84,24 +75,13 @@ class WebEnumerator implements Enumerator<Object> {
         }
     }
 
+    // required by linq4j Enumerator interface
     public void reset() {
         throw new UnsupportedOperationException();
     }
 
+    // required by linq4j Enumerator interface
     public void close() {
-        // TODO - revisit
-        //try {
-            //this.reader.close();
-        //} catch (Exception e) {
-            //throw new RuntimeException("Error closing web reader", e);
-        //}
-    }
-
-    public RelDataType getRowType(RelDataTypeFactory typeFactory) {
-        if (this.rowType == null) {
-            this.rowType = this.converter.getRowType((JavaTypeFactory) typeFactory);
-        }
-        return this.rowType;
     }
 
     /** Returns an array of integers {0, ..., n - 1}. */
