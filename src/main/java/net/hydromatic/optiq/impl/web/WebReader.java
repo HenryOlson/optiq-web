@@ -25,6 +25,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
+
 import java.io.IOException;
 
 import java.net.MalformedURLException;
@@ -40,7 +41,8 @@ import java.util.List;
  * hpo - 2/23/2014
  *
  */
-public class WebReader {
+public class WebReader implements Iterable<Elements> {
+//public class WebReader {
 
     private static final String DEFAULT_CHARSET = "UTF-8";
 
@@ -52,8 +54,7 @@ public class WebReader {
     private WebReaderIterator iterator;
     private Elements headings;
 
-    public WebReader(String url, String path, Integer index)
-        throws WebReaderException, IOException {
+    public WebReader(String url, String path, Integer index) throws WebReaderException {
         if (url == null) {
             throw new WebReaderException("URL must not be null");
         }
@@ -67,22 +68,26 @@ public class WebReader {
         this.index = index;
     }
 
-    public WebReader(String url, String path) throws WebReaderException, IOException {
+    public WebReader(String url, String path) throws WebReaderException {
         this(url, path, null);
     }
 
-    public WebReader(String url) throws WebReaderException, IOException {
+    public WebReader(String url) throws WebReaderException {
         this(url, null, null);
     }
 
-    private void getTable() throws WebReaderException, IOException {
+    private void getTable() throws WebReaderException {
 
         Document doc;
-        String proto = this.url.getProtocol();
-        if (proto.equals("file")) {
+        try {
+            String proto = this.url.getProtocol();
+            if (proto.equals("file")) {
                 doc = Jsoup.parse(new File(this.url.getFile()), this.charset);
-        } else {
+            } else {
                 doc = Jsoup.connect(this.url.toString()).get();
+            }
+        } catch (IOException e) {
+            throw new WebReaderException("Cannot read " + this.url.toString(), e);
         }
 
         this.tableElement = (this.path != null && !this.path.equals(""))
@@ -143,15 +148,15 @@ public class WebReader {
         return bestTable;
     }
 
-    public void refresh() throws WebReaderException, IOException {
+    public void refresh() throws WebReaderException {
         getTable();
     }
 
-    public void rewind() throws WebReaderException, IOException {
+    public void rewind() throws WebReaderException {
         this.iterator();
     }
 
-    public Elements getHeadings() throws WebReaderException, IOException {
+    public Elements getHeadings() throws WebReaderException {
 
         if (this.headings == null) {
             this.iterator();
@@ -164,9 +169,15 @@ public class WebReader {
         return "Table: {url: " + this.url + ", path: " + this.path;
     }
 
-    public WebReaderIterator iterator() throws WebReaderException, IOException {
+    //public WebReaderIterator iterator() throws WebReaderException {
+    public WebReaderIterator iterator() {
         if (this.tableElement == null) {
-            getTable();
+            try {
+                getTable();
+            } catch (Exception e) {
+                // TODO: temporary hack
+                throw new RuntimeException(e);
+            }
         }
 
         this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
@@ -175,7 +186,6 @@ public class WebReader {
         Elements headings = this.iterator.next("th");
         // if not, generate some default column names
         if (headings.size() == 0) {
-                //throw new WebReaderException("No headings on table");
                 // rewind and peek at the first row of data
                 this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
                 Elements firstRow = this.iterator.next("td");
@@ -195,8 +205,9 @@ public class WebReader {
         return this.iterator;
     }
 
-    public List<Elements> readAll() throws WebReaderException, IOException {
+    public List<Elements> readAll() throws WebReaderException {
         WebReader.WebReaderIterator rows = this.iterator();
+        //Iterator<Elements> rows = this.iterator();
         ArrayList<Elements> allRows = new ArrayList();
 
         while (rows.hasNext()) {
@@ -207,7 +218,7 @@ public class WebReader {
         return allRows;
     }
 
-    public Elements readNext() throws WebReaderException, IOException {
+    public Elements readNext() throws WebReaderException {
         if (this.iterator == null) {
             iterator();
         }
@@ -222,7 +233,7 @@ public class WebReader {
     public void close() {
     }
 
-    public class WebReaderIterator implements Iterator {
+    public class WebReaderIterator implements Iterator<Elements> {
         Iterator<Element> rowIterator;
 
         public WebReaderIterator(Elements rows) {

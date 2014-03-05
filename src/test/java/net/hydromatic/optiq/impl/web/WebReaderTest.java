@@ -24,8 +24,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-
 import java.util.List;
 
 /**
@@ -38,7 +36,7 @@ public class WebReaderTest {
      * Test WebReader URL instantiation - no path
      */
     @Test
-    public void testWebReaderURLNoPath() throws WebReaderException, IOException {
+    public void testWebReaderURLNoPath() throws WebReaderException {
         Assume.assumeTrue(AllTests.hazNetwork());
         WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States");
         t.refresh();
@@ -48,7 +46,7 @@ public class WebReaderTest {
      * Test WebReader URL instantiation - with path
      */
     @Test
-    public void testWebReaderURLWithPath() throws WebReaderException, IOException {
+    public void testWebReaderURLWithPath() throws WebReaderException {
         Assume.assumeTrue(AllTests.hazNetwork());
         WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
                 "#mw-content-text > table.wikitable.sortable", new Integer(0));
@@ -59,7 +57,7 @@ public class WebReaderTest {
      * Test WebReader URL fetch
      */
     @Test
-    public void testWebReaderURLFetch() throws WebReaderException, IOException {
+    public void testWebReaderURLFetch() throws WebReaderException {
         Assume.assumeTrue(AllTests.hazNetwork());
         WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States",
                 "#mw-content-text > table.wikitable.sortable", 0);
@@ -71,7 +69,7 @@ public class WebReaderTest {
      * Test failed WebReader instantiation - malformed URL
      */
     @Test(expected = net.hydromatic.optiq.impl.web.WebReaderException.class)
-    public void testWebReaderMalURL() throws WebReaderException, IOException {
+    public void testWebReaderMalURL() throws WebReaderException {
         WebReader t = new WebReader("badproto://en.wikipedia.org/wiki/List_of_United_States_cities_by_population",
             "table:eq(4)");
         t.refresh();
@@ -80,8 +78,8 @@ public class WebReaderTest {
     /**
      * Test failed WebReader instantiation - bad URL
      */
-    @Test(expected = java.net.UnknownHostException.class)
-    public void testWebReaderBadURL() throws WebReaderException, IOException {
+    @Test(expected = net.hydromatic.optiq.impl.web.WebReaderException.class)
+    public void testWebReaderBadURL() throws WebReaderException {
         WebReader t = new WebReader("http://ex.wikipedia.org/wiki/List_of_United_States_cities_by_population",
             "table:eq(4)");
         t.refresh();
@@ -91,7 +89,7 @@ public class WebReaderTest {
      * Test failed WebReader instantiation - bad selector
      */
     @Test(expected = net.hydromatic.optiq.impl.web.WebReaderException.class)
-    public void testWebReaderBadSelector() throws WebReaderException, IOException {
+    public void testWebReaderBadSelector() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableOK.html", "table:eq(1)");
         t.refresh();
     }
@@ -100,7 +98,7 @@ public class WebReaderTest {
      * Test WebReader with static file - headings
      */
     @Test
-    public void testWebReaderHeadings() throws WebReaderException, IOException {
+    public void testWebReaderHeadings() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableOK.html");
         Elements headings = t.getHeadings();
         assertTrue(headings.get(1).text().equals("H1"));
@@ -110,7 +108,7 @@ public class WebReaderTest {
      * Test WebReader with static file - data
      */
     @Test
-    public void testWebReaderData() throws WebReaderException, IOException {
+    public void testWebReaderData() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableOK.html");
         Elements row = t.readNext();
         assertTrue(row.get(2).text().equals("R0C2"));
@@ -122,7 +120,7 @@ public class WebReaderTest {
      * Test WebReader with bad static file - headings
      */
     @Test
-    public void testWebReaderHeadingsBadFile() throws WebReaderException, IOException {
+    public void testWebReaderHeadingsBadFile() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableNoTheadTbody.html");
         Elements headings = t.getHeadings();
         assertTrue(headings.get(1).text().equals("H1"));
@@ -132,7 +130,7 @@ public class WebReaderTest {
      * Test WebReader with bad static file - data
      */
     @Test
-    public void testWebReaderDataBadFile() throws WebReaderException, IOException {
+    public void testWebReaderDataBadFile() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableNoTheadTbody.html");
         Elements row = t.readNext();
         assertTrue(row.get(2).text().equals("R0C2"));
@@ -144,7 +142,7 @@ public class WebReaderTest {
      * Test WebReader with no headings static file - data
      */
     @Test
-    public void testWebReaderDataNoTH() throws WebReaderException, IOException {
+    public void testWebReaderDataNoTH() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableNoTH.html");
         Elements row = t.readNext();
         assertTrue(row.get(2).text().equals("R0C2"));
@@ -154,7 +152,7 @@ public class WebReaderTest {
      * Test WebReader iterator with static file
      */
     @Test
-    public void testWebReaderIterator() throws WebReaderException, IOException {
+    public void testWebReaderIterator() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableOK.html");
         Elements row = null;
         WebReader.WebReaderIterator rows = t.iterator();
@@ -169,7 +167,7 @@ public class WebReaderTest {
      * Test WebReader readAll with static file
      */
     @Test
-    public void testWebReaderReadAll() throws WebReaderException, IOException {
+    public void testWebReaderReadAll() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableOK.html");
         Elements row = null;
         List<Elements> all = t.readAll();
