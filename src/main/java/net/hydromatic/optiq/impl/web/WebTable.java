@@ -38,7 +38,7 @@ import java.util.*;
 
 
 /**
- * WebTable - table implementation based on an HTML table.
+ * WebTable - table implementation wrapping a URL / HTML table.
  *
  * hpo - 2/23/2014
  *
@@ -78,12 +78,10 @@ public class WebTable extends AbstractQueryableTable
         if (protoRowType != null) {
             return protoRowType.apply(typeFactory);
         }
-
         return this.converter.getRowType((JavaTypeFactory) typeFactory);
     }
 
-    public <T> Queryable<T> asQueryable(QueryProvider queryProvider,
-        SchemaPlus schema, String tableName) {
+    public <T> Queryable<T> asQueryable(QueryProvider queryProvider, SchemaPlus schema, String tableName) {
         return new AbstractTableQueryable<T>(queryProvider, schema, this,
             tableName) {
                 public Enumerator<T> enumerator() {
@@ -112,8 +110,7 @@ public class WebTable extends AbstractQueryableTable
             };
     }
 
-    public RelNode toRel(RelOptTable.ToRelContext context,
-        RelOptTable relOptTable) {
+    public RelNode toRel(RelOptTable.ToRelContext context, RelOptTable relOptTable) {
         return new JavaRules.EnumerableTableAccessRel(context.getCluster(),
             context.getCluster().traitSetOf(EnumerableConvention.INSTANCE),
             relOptTable, (Class) getElementType());

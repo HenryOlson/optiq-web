@@ -31,12 +31,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /*
- * WebReader - scrapes HTML tables off of URLs
+ * WebReader - scrapes HTML tables from URLs using Jsoup
  *
  * hpo - 2/23/2014
  *
@@ -94,8 +92,7 @@ public class WebReader implements Iterable<Elements> {
 
     }
 
-    private Element getSelectedTable(Document doc, String path)
-        throws WebReaderException {
+    private Element getSelectedTable(Document doc, String path) throws WebReaderException {
 
         // get selected elements
         Elements list = doc.select(path);
@@ -205,33 +202,10 @@ public class WebReader implements Iterable<Elements> {
         return this.iterator;
     }
 
-    public List<Elements> readAll() throws WebReaderException {
-        WebReader.WebReaderIterator rows = this.iterator();
-        ArrayList<Elements> allRows = new ArrayList();
-
-        while (rows.hasNext()) {
-            Elements row = rows.next();
-            allRows.add(row);
-        }
-
-        return allRows;
-    }
-
-    public Elements readNext() throws WebReaderException {
-        if (this.iterator == null) {
-            iterator();
-        }
-
-        if (this.iterator.hasNext()) {
-            return this.iterator.next();
-        } else {
-            return null;
-        }
-    }
-
     public void close() {
     }
 
+    // Iterates over HTML tables, returning an Elements per row
     public class WebReaderIterator implements Iterator<Elements> {
         Iterator<Element> rowIterator;
 

@@ -32,12 +32,6 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 
-/*
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-*/
-
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -72,7 +66,9 @@ public class WebRowConverter {
         this.fieldConfigs = fieldConfigs;
     }
 
-    // initialize() - object initialization is separate to avoid unnecessary URL reads
+    // initialize() - combine HTML table header information with field definitions
+    //      to initialize the table reader
+    // NB:  object initialization is deferred to avoid unnecessary URL reads
     private void initialize() {
             if (this.initialized) {
                 return;
@@ -132,11 +128,13 @@ public class WebRowConverter {
             this.initialized = true;
         }
 
+        // add another field definition to the WebRowConverter during initialization
         private void addFieldDef(String name, WebFieldType type, boolean skip,
             Map<String, Object> config) {
             this.fieldDefs.add(new FieldDef(name, type, skip, config));
         }
 
+        // convert a row of JSoup Elements to an array of java objects
         public Object toRow(Elements rowElements, int[] fields) {
             initialize();
             final Object[] objects = new Object[fields.length];
@@ -144,8 +142,7 @@ public class WebRowConverter {
             for (int i = 0; i < fields.length; i++) {
                 int field = fields[i];
                 int elementIx = this.validFields.get(field).intValue();
-                objects[i] = this.fieldDefs.get(elementIx)
-                                           .convert(rowElements.get(elementIx));
+                objects[i] = this.fieldDefs.get(elementIx).convert(rowElements.get(elementIx));
             }
 
             return objects;
@@ -187,6 +184,7 @@ public class WebRowConverter {
             return typeFactory.createStructType(Pair.zip(names, types));
         }
 
+    // responsible for parsing an HTML table cell
     private class CellReader {
         private String type;
         private String selector;
@@ -251,6 +249,8 @@ public class WebRowConverter {
         }
     }
 
+    // responsible for managing field (column) definition
+    // responsible for converting an Element to a java data type
     private class FieldDef {
         String name;
         WebFieldType type;

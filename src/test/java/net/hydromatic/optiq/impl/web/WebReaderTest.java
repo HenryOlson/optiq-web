@@ -24,7 +24,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * Unit tests for WebReader.
@@ -61,8 +61,11 @@ public class WebReaderTest {
         Assume.assumeTrue(AllTests.hazNetwork());
         WebReader t = new WebReader("http://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States",
                 "#mw-content-text > table.wikitable.sortable", 0);
-        List<Elements> all = t.readAll();
-        assertTrue(all.size() == 50);
+        int i = 0;
+        for (Elements row : t) {
+            i++;
+        }
+        assertTrue(i == 50);
     }
 
     /**
@@ -110,9 +113,10 @@ public class WebReaderTest {
     @Test
     public void testWebReaderData() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableOK.html");
-        Elements row = t.readNext();
+        Iterator<Elements> i = t.iterator();
+        Elements row = i.next();
         assertTrue(row.get(2).text().equals("R0C2"));
-        row = t.readNext();
+        row = i.next();
         assertTrue(row.get(0).text().equals("R1C0"));
     }
 
@@ -131,10 +135,11 @@ public class WebReaderTest {
      */
     @Test
     public void testWebReaderDataBadFile() throws WebReaderException {
-        WebReader t = new WebReader("file:target/test-classes/tableNoTheadTbody.html");
-        Elements row = t.readNext();
+        //WebReader t = new WebReader("file:target/test-classes/tableNoTheadTbody.html");
+        Iterator<Elements> i = new WebReader("file:target/test-classes/tableNoTheadTbody.html").iterator();
+        Elements row = i.next();
         assertTrue(row.get(2).text().equals("R0C2"));
-        row = t.readNext();
+        row = i.next();
         assertTrue(row.get(0).text().equals("R1C0"));
     }
 
@@ -144,7 +149,8 @@ public class WebReaderTest {
     @Test
     public void testWebReaderDataNoTH() throws WebReaderException {
         WebReader t = new WebReader("file:target/test-classes/tableNoTH.html");
-        Elements row = t.readNext();
+        Iterator<Elements> i = new WebReader("file:target/test-classes/tableNoTH.html").iterator();
+        Elements row = i.next();
         assertTrue(row.get(2).text().equals("R0C2"));
     }
 
@@ -161,17 +167,6 @@ public class WebReaderTest {
         }
         assertFalse(row == null);
         assertTrue(row.get(1).text().equals("R2C1"));
-    }
-
-    /**
-     * Test WebReader readAll with static file
-     */
-    @Test
-    public void testWebReaderReadAll() throws WebReaderException {
-        WebReader t = new WebReader("file:target/test-classes/tableOK.html");
-        Elements row = null;
-        List<Elements> all = t.readAll();
-        assertTrue(all.get(1).get(2).text().equals("R1C2"));
     }
 
 }
