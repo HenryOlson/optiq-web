@@ -51,8 +51,7 @@ public class WebTable extends AbstractQueryableTable
     private WebRowConverter converter;
 
     /** Creates a WebTable. */
-    WebTable(Map<String, Object> tableDef, RelProtoDataType protoRowType)
-        throws Exception {
+    WebTable(Map<String, Object> tableDef, RelProtoDataType protoRowType) throws Exception {
         super(Object[].class);
 
         this.protoRowType = protoRowType;
@@ -90,8 +89,7 @@ public class WebTable extends AbstractQueryableTable
                 public Enumerator<T> enumerator() {
                     //noinspection unchecked
                     try {
-                        reader.rewind();
-                        WebEnumerator enumerator = new WebEnumerator(reader, converter);
+                        WebEnumerator enumerator = new WebEnumerator(reader.iterator(), converter);
                         return (Enumerator<T>) enumerator;
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -105,8 +103,7 @@ public class WebTable extends AbstractQueryableTable
         return new AbstractEnumerable<Object>() {
                 public Enumerator<Object> enumerator() {
                     try {
-                        reader.rewind();
-                        WebEnumerator enumerator = new WebEnumerator(reader, converter, fields);
+                        WebEnumerator enumerator = new WebEnumerator(reader.iterator(), converter, fields);
                         return enumerator;
                     } catch (Exception e) {
                         throw new RuntimeException(e);

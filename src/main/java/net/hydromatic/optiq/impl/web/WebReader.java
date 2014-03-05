@@ -42,7 +42,6 @@ import java.util.List;
  *
  */
 public class WebReader implements Iterable<Elements> {
-//public class WebReader {
 
     private static final String DEFAULT_CHARSET = "UTF-8";
 
@@ -149,11 +148,8 @@ public class WebReader implements Iterable<Elements> {
     }
 
     public void refresh() throws WebReaderException {
+        this.headings = null;
         getTable();
-    }
-
-    public void rewind() throws WebReaderException {
-        this.iterator();
     }
 
     public Elements getHeadings() throws WebReaderException {
@@ -169,7 +165,6 @@ public class WebReader implements Iterable<Elements> {
         return "Table: {url: " + this.url + ", path: " + this.path;
     }
 
-    //public WebReaderIterator iterator() throws WebReaderException {
     public WebReaderIterator iterator() {
         if (this.tableElement == null) {
             try {
@@ -182,32 +177,36 @@ public class WebReader implements Iterable<Elements> {
 
         this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
 
-        // first row must contain headings
-        Elements headings = this.iterator.next("th");
-        // if not, generate some default column names
-        if (headings.size() == 0) {
-                // rewind and peek at the first row of data
-                this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
-                Elements firstRow = this.iterator.next("td");
-                int i = 0;
-                headings = new Elements();
-                for (Element td : firstRow) {
-                        Element th = td.clone();
-                        th.tagName("th");
-                        th.html("col" + i++);
-                        headings.add(th);
-                }
-                // rewind, so queries see the first row
-                this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
+        // if we haven't cached the headings, get them
+        // TODO: this needs to be reworked to properly cache the headings
+        //if (this.headings == null) {
+        if (true) {
+            // first row must contain headings
+            Elements headings = this.iterator.next("th");
+            // if not, generate some default column names
+            if (headings.size() == 0) {
+                    // rewind and peek at the first row of data
+                    this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
+                    Elements firstRow = this.iterator.next("td");
+                    int i = 0;
+                    headings = new Elements();
+                    for (Element td : firstRow) {
+                            Element th = td.clone();
+                            th.tagName("th");
+                            th.html("col" + i++);
+                            headings.add(th);
+                    }
+                    // rewind, so queries see the first row
+                    this.iterator = new WebReaderIterator(this.tableElement.select("tr"));
+            }
+            this.headings = headings;
         }
-        this.headings = headings;
 
         return this.iterator;
     }
 
     public List<Elements> readAll() throws WebReaderException {
         WebReader.WebReaderIterator rows = this.iterator();
-        //Iterator<Elements> rows = this.iterator();
         ArrayList<Elements> allRows = new ArrayList();
 
         while (rows.hasNext()) {

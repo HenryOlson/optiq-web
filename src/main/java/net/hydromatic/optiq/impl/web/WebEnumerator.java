@@ -27,32 +27,30 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 
+import java.util.Iterator;
+
 /*
- * WebEnumerator - wraps WebReader and WebRowConverter, converts tr Elements to table rows
+ * WebEnumerator - wraps WebReader and WebRowConverter, enumerates tr Elements as table rows
  *
  * hpo - 2/23/2014
  *
  */
 class WebEnumerator implements Enumerator<Object> {
 
-    private WebReader reader = null;
+    private Iterator<Elements> iterator = null;
     private WebRowConverter converter = null;;
     private int[] fields;
     private RelDataType rowType;
     private Object current;
 
-    public WebEnumerator(WebReader reader, WebRowConverter converter) throws Exception {
-        this.reader = reader;
+    public WebEnumerator(Iterator<Elements> iterator, WebRowConverter converter) throws Exception {
+        this.iterator = iterator;
         this.converter = converter;
     }
 
-    public WebEnumerator(WebReader reader,  WebRowConverter converter, int[] fields)
+    public WebEnumerator(Iterator<Elements> iterator,  WebRowConverter converter, int[] fields)
         throws Exception {
-        this(reader, converter);
-        this.fields = fields;
-    }
-
-    public void setFields(int[] fields) {
+        this(iterator, converter);
         this.fields = fields;
     }
 
@@ -64,24 +62,23 @@ class WebEnumerator implements Enumerator<Object> {
     }
 
     public Object current() {
+        if (current == null) {
+            this.moveNext();
+        }
         return current;
     }
 
     public boolean moveNext() {
-    defaultFields();
+        defaultFields();
         try {
-            final Elements row = this.reader.readNext();
-
-            if (row == null) {
+            if (this.iterator.hasNext()) {
+                final Elements row = this.iterator.next();
+                current = this.converter.toRow(row, this.fields);
+                return true;
+            } else {
                 current = null;
-                this.reader.close();
-
                 return false;
             }
-
-            current = this.converter.toRow(row, this.fields);
-
-            return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -91,16 +88,13 @@ class WebEnumerator implements Enumerator<Object> {
         throw new UnsupportedOperationException();
     }
 
-    public void rewind() throws Exception {
-        this.reader.rewind();
-    }
-
     public void close() {
-        try {
-            this.reader.close();
-        } catch (Exception e) {
-            throw new RuntimeException("Error closing web reader", e);
-        }
+        // TODO - revisit
+        //try {
+            //this.reader.close();
+        //} catch (Exception e) {
+            //throw new RuntimeException("Error closing web reader", e);
+        //}
     }
 
     public RelDataType getRowType(RelDataTypeFactory typeFactory) {
