@@ -20,6 +20,7 @@ package net.hydromatic.optiq.impl.web;
 import net.hydromatic.optiq.*;
 import net.hydromatic.optiq.impl.AbstractTableQueryable;
 import net.hydromatic.optiq.impl.java.AbstractQueryableTable;
+import net.hydromatic.optiq.impl.java.JavaTypeFactory;
 import net.hydromatic.optiq.rules.java.EnumerableConvention;
 import net.hydromatic.optiq.rules.java.JavaRules;
 
@@ -44,18 +45,26 @@ import java.util.*;
  */
 public class WebTable extends AbstractQueryableTable
     implements TranslatableTable {
-    private final Map<String, Object> tableDef;
+
     private final RelProtoDataType protoRowType;
-    private WebEnumerator webEnumerator;
+    private WebReader reader;
+    private WebRowConverter converter;
 
     /** Creates a WebTable. */
     WebTable(Map<String, Object> tableDef, RelProtoDataType protoRowType)
         throws Exception {
         super(Object[].class);
-        this.tableDef = tableDef;
+
         this.protoRowType = protoRowType;
-        this.webEnumerator = new WebEnumerator(tableDef);
+        ArrayList<Map<String, Object>> fieldConfigs =
+                (ArrayList<Map<String, Object>>) tableDef.get("fieldDefs");
+        String url = (String) tableDef.get("url");
+        String path = (String) tableDef.get("path");
+        Integer index = (Integer) tableDef.get("index");
+        this.reader = new WebReader(url, path, index);
+        this.converter = new WebRowConverter(this.reader, fieldConfigs);
         //System.out.println("Created WebTable: " + (String) tableDef.get("tableName"));
+
     }
 
     public String toString() {
@@ -71,7 +80,7 @@ public class WebTable extends AbstractQueryableTable
             return protoRowType.apply(typeFactory);
         }
 
-        return this.webEnumerator.getRowType(typeFactory);
+        return this.converter.getRowType((JavaTypeFactory) typeFactory);
     }
 
     public <T> Queryable<T> asQueryable(QueryProvider queryProvider,
@@ -81,14 +90,14 @@ public class WebTable extends AbstractQueryableTable
                 public Enumerator<T> enumerator() {
                     //noinspection unchecked
                     try {
-                        webEnumerator.rewind();
+                        reader.rewind();
+                        WebEnumerator enumerator = new WebEnumerator(reader, converter);
+                        return (Enumerator<T>) enumerator;
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-
-                    return (Enumerator<T>) webEnumerator;
-                }
-            };
+            }
+        };
     }
 
     /** Returns an enumerable over a given projection of the fields. */
@@ -96,14 +105,12 @@ public class WebTable extends AbstractQueryableTable
         return new AbstractEnumerable<Object>() {
                 public Enumerator<Object> enumerator() {
                     try {
-                        webEnumerator.rewind();
+                        reader.rewind();
+                        WebEnumerator enumerator = new WebEnumerator(reader, converter, fields);
+                        return enumerator;
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-
-                    webEnumerator.setFields(fields);
-
-                    return webEnumerator;
                 }
             };
     }
