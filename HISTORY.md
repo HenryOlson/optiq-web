@@ -2,8 +2,15 @@
 
 For a full list of releases, see <a href="https://github.com/HenryOlson/optiq-web/releases">github</a>.
 
-## Next - 0.2? / 2014-03-?
+## Next - 0.2 / 2014-03-14?
 
+ToDo
+* Sync with optiq-0.5 - eliminate equijoin warning messages (among other things)
+
+Done
+* Renamed and rationalized configuration fields
+* Added replace patterns to cell parsing logic
+* Refactored and decrufted WebEnumerator, WebReader
 * Add handling for tables without <TH> elements
 * Improved unit tests - add tests using local files, make URL tests contingent on network access
 * Add ability to parse HTML tables in local files

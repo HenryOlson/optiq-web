@@ -44,14 +44,14 @@ public class WebReader implements Iterable<Elements> {
     private static final String DEFAULT_CHARSET = "UTF-8";
 
     private URL url;
-    private String path;
+    private String selector;
     private Integer index;
     private String charset = DEFAULT_CHARSET;
     private Element tableElement;
     private WebReaderIterator iterator;
     private Elements headings;
 
-    public WebReader(String url, String path, Integer index) throws WebReaderException {
+    public WebReader(String url, String selector, Integer index) throws WebReaderException {
         if (url == null) {
             throw new WebReaderException("URL must not be null");
         }
@@ -61,12 +61,12 @@ public class WebReader implements Iterable<Elements> {
         } catch (MalformedURLException e) {
                 throw new WebReaderException("Malformed URL: '" + url + "'", e);
         }
-        this.path = path;
+        this.selector = selector;
         this.index = index;
     }
 
-    public WebReader(String url, String path) throws WebReaderException {
-        this(url, path, null);
+    public WebReader(String url, String selector) throws WebReaderException {
+        this(url, selector, null);
     }
 
     public WebReader(String url) throws WebReaderException {
@@ -87,15 +87,15 @@ public class WebReader implements Iterable<Elements> {
             throw new WebReaderException("Cannot read " + this.url.toString(), e);
         }
 
-        this.tableElement = (this.path != null && !this.path.equals(""))
-            ? getSelectedTable(doc, this.path) : getBestTable(doc);
+        this.tableElement = (this.selector != null && !this.selector.equals(""))
+            ? getSelectedTable(doc, this.selector) : getBestTable(doc);
 
     }
 
-    private Element getSelectedTable(Document doc, String path) throws WebReaderException {
+    private Element getSelectedTable(Document doc, String selector) throws WebReaderException {
 
         // get selected elements
-        Elements list = doc.select(path);
+        Elements list = doc.select(selector);
 
         // get the element
         Element el;
@@ -115,7 +115,7 @@ public class WebReader implements Iterable<Elements> {
         if (el.tag().getName().equals("table")) {
             return el;
         } else {
-            throw new WebReaderException("selected (" + path + ") element is a "
+            throw new WebReaderException("selected (" + selector + ") element is a "
                 + el.tag().getName() + ", not a table");
         }
     }
@@ -159,7 +159,7 @@ public class WebReader implements Iterable<Elements> {
     }
 
     private String tableKey() {
-        return "Table: {url: " + this.url + ", path: " + this.path;
+        return "Table: {url: " + this.url + ", selector: " + this.selector;
     }
 
     public WebReaderIterator iterator() {

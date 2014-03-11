@@ -169,17 +169,16 @@
       </plugin>
 
       <plugin>
-              <groupId>org.codehaus.mojo</groupId>
+          <groupId>org.codehaus.mojo</groupId>
 	      <artifactId>jalopy-maven-plugin</artifactId>
 	      <version>1.0-alpha-1</version>
 	      <configuration>
 	        <srcExcludesPattern>**/CsvTableScan.java</srcExcludesPattern>
-		<failOnError>false</failOnError>
-		<convention>${top.dir}src/main/config/jalopy.xml</convention>
+            <failOnError>false</failOnError>
+            <convention>${top.dir}src/main/config/jalopy.xml</convention>
 	      </configuration>
       </plugin>
 
-      <!-- remove temporarily -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -202,7 +201,6 @@
           </execution>
         </executions>
       </plugin>
-      <!-- -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

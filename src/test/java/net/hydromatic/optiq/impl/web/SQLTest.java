@@ -72,6 +72,16 @@ public class SQLTest {
         "State=California; Statehood=1850-09-09\n");
   }
 
+  /**
+   * Reads from a URL and checks the result - tests replace attribute
+   */
+  @Test
+  public void testReplace() throws SQLException {
+    Assume.assumeTrue(AllTests.hazNetwork());
+    checkSql("fortune", "select \"Company\" from \"Companies\" order by \"Market Value\" desc limit 1",
+        "Company=Apple\n");
+  }
+
   // helper functions
 
   private void checkSql(String model, String sql) throws SQLException {

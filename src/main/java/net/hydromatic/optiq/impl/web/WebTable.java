@@ -56,11 +56,11 @@ public class WebTable extends AbstractQueryableTable
 
         this.protoRowType = protoRowType;
         ArrayList<Map<String, Object>> fieldConfigs =
-                (ArrayList<Map<String, Object>>) tableDef.get("fieldDefs");
+                (ArrayList<Map<String, Object>>) tableDef.get("fields");
         String url = (String) tableDef.get("url");
-        String path = (String) tableDef.get("path");
+        String selector = (String) tableDef.get("selector");
         Integer index = (Integer) tableDef.get("index");
-        this.reader = new WebReader(url, path, index);
+        this.reader = new WebReader(url, selector, index);
         this.converter = new WebRowConverter(this.reader, fieldConfigs);
         //System.out.println("Created WebTable: " + (String) tableDef.get("tableName"));
 

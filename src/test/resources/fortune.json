@@ -1,0 +1,26 @@
+{
+  version: "1.0",
+  defaultSchema: "Fortune",
+  schemas: [
+    {
+      name: "Fortune",
+      type: "custom",
+      factory: "net.hydromatic.optiq.impl.web.WebSchemaFactory",
+      operand: {
+	  tables: [ 
+        {
+            tableName: "Companies",
+            url: "http://www.forbes.com/global2000/list/",
+            fields: [
+              {th: "Rank", type: "int"},
+              {th: "Sales", replace: "B|,|\\$", type: "double"},
+              {th: "Profits", replace: "B|,|\\$", type: "double"},
+              {th: "Assets", replace: "B|,|\\$", type: "double"},
+              {th: "Market Value", replace: "B|,|\\$", type: "double"}
+            ]
+        }
+	]
+      }
+    }
+  ]
+}

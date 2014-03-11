@@ -57,7 +57,7 @@ public class WebRowConverter {
     private boolean initialized = false;
 
     // row parser configuration
-    private ArrayList<FieldDef> fieldDefs;
+    private ArrayList<FieldDef> fields;
     private ArrayList<Integer> validFields;
 
     // constructor
@@ -73,7 +73,7 @@ public class WebRowConverter {
             if (this.initialized) {
                 return;
             }
-            this.fieldDefs = new ArrayList<FieldDef>();
+            this.fields = new ArrayList<FieldDef>();
             this.validFields = new ArrayList<Integer>();
 
             final Map<String, Map<String, Object>> colMap = new HashMap();
@@ -131,7 +131,7 @@ public class WebRowConverter {
         // add another field definition to the WebRowConverter during initialization
         private void addFieldDef(String name, WebFieldType type, boolean skip,
             Map<String, Object> config) {
-            this.fieldDefs.add(new FieldDef(name, type, skip, config));
+            this.fields.add(new FieldDef(name, type, skip, config));
         }
 
         // convert a row of JSoup Elements to an array of java objects
@@ -142,7 +142,7 @@ public class WebRowConverter {
             for (int i = 0; i < fields.length; i++) {
                 int field = fields[i];
                 int elementIx = this.validFields.get(field).intValue();
-                objects[i] = this.fieldDefs.get(elementIx).convert(rowElements.get(elementIx));
+                objects[i] = this.fields.get(elementIx).convert(rowElements.get(elementIx));
             }
 
             return objects;
@@ -159,7 +159,7 @@ public class WebRowConverter {
             List<RelDataType> types = new ArrayList<RelDataType>();
 
             // iterate through FieldDefs, populating names and types
-            for (FieldDef f : this.fieldDefs) {
+            for (FieldDef f : this.fields) {
                 if (f.include()) {
                     names.add(f.getName());
 
@@ -189,10 +189,12 @@ public class WebRowConverter {
         private String type;
         private String selector;
         private Integer selectedElement;
-        private String patternText;
-        private Pattern pattern;
+        private String replaceText;
+        private Pattern replacePattern;
+        private String replaceWith;
+        private String matchText;
+        private Pattern matchPattern;
         private Integer matchGroup;
-        private String content;
 
         public CellReader() {
         }
@@ -202,22 +204,32 @@ public class WebRowConverter {
                 this.type = (String) config.get("type");
                 this.selector = (String) config.get("selector");
                 this.selectedElement = (Integer) config.get("selectedElement");
-                this.patternText = (String) config.get("pattern");
+                this.replaceText = (String) config.get("replace");
+                this.replaceWith = (String) config.get("replaceWith");
+                this.matchText = (String) config.get("match");
                 this.matchGroup = (Integer) config.get("matchGroup");
-                this.content = (String) config.get("content");
             }
 
             if (this.selector == null) {
                 this.selector = "*";
             }
 
+            if (this.replaceText != null) {
+                this.replacePattern = Pattern.compile(this.replaceText);
+            }
+
+            if (this.replaceWith == null) {
+                this.replaceWith = "";
+            }
+
+            if (this.matchText != null) {
+                this.matchPattern = Pattern.compile(this.matchText);
+            }
+
             if (this.matchGroup == null) {
                 this.matchGroup = new Integer(0);
             }
 
-            if (this.patternText != null) {
-                this.pattern = Pattern.compile(this.patternText);
-            }
         }
 
         public String read(Element cell) {
@@ -235,10 +247,17 @@ public class WebRowConverter {
 
             String cellString = Joiner.on(" ").join(cellText).trim();
 
-            if (this.pattern == null) {
+            // replace
+            if (this.replacePattern != null) {
+                Matcher m = this.replacePattern.matcher(cellString);
+                cellString = m.replaceAll(this.replaceWith);
+            }
+
+            // match
+            if (this.matchPattern == null) {
                 return cellString;
             } else {
-                Matcher m = this.pattern.matcher(cellString);
+                Matcher m = this.matchPattern.matcher(cellString);
 
                 if (m.find()) {
                     return m.group(this.matchGroup.intValue());
