@@ -77,9 +77,9 @@ public class SQLTest {
    */
   @Test
   public void testReplace() throws SQLException {
-    Assume.assumeTrue(AllTests.hazNetwork());
-    checkSql("fortune", "select \"Company\" from \"Companies\" order by \"Market Value\" desc limit 1",
-        "Company=Apple\n");
+    checkSql("misfortune", "select sum(\"Profits\") as \"TotalProfits\""
+            + ", sum(\"BadAssets\") as \"BadAssets\" from \"Companies\"",
+        "TotalProfits=492.1; BadAssets=0.0\n");
   }
 
   // helper functions

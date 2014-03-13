@@ -10,12 +10,12 @@
 	  tables: [ 
         {
             tableName: "Companies",
-            url: "http://www.forbes.com/global2000/list/",
+            url: "file:target/test-classes/forbes.html",
             fields: [
               {th: "Rank", type: "int"},
               {th: "Sales", replace: "B|,|\\$", type: "double"},
               {th: "Profits", replace: "B|,|\\$", type: "double"},
-              {th: "Assets", replace: "B|,|\\$", type: "double"},
+              {th: "Assets", name: "BadAssets", type: "double"},
               {th: "Market Value", replace: "B|,|\\$", type: "double"}
             ]
         }
