@@ -194,7 +194,7 @@ public class WebRowConverter {
         private String replaceWith;
         private String matchText;
         private Pattern matchPattern;
-        private Integer matchGroup;
+        private Integer matchSeq;
 
         public CellReader() {
         }
@@ -207,7 +207,7 @@ public class WebRowConverter {
                 this.replaceText = (String) config.get("replace");
                 this.replaceWith = (String) config.get("replaceWith");
                 this.matchText = (String) config.get("match");
-                this.matchGroup = (Integer) config.get("matchGroup");
+                this.matchSeq = (Integer) config.get("matchSeq");
             }
 
             if (this.selector == null) {
@@ -226,8 +226,8 @@ public class WebRowConverter {
                 this.matchPattern = Pattern.compile(this.matchText);
             }
 
-            if (this.matchGroup == null) {
-                this.matchGroup = new Integer(0);
+            if (this.matchSeq == null) {
+                this.matchSeq = new Integer(0);
             }
 
         }
@@ -257,10 +257,13 @@ public class WebRowConverter {
             if (this.matchPattern == null) {
                 return cellString;
             } else {
+                List<String> allMatches = new ArrayList<String>();
                 Matcher m = this.matchPattern.matcher(cellString);
-
-                if (m.find()) {
-                    return m.group(this.matchGroup.intValue());
+                while (m.find()) {
+                    allMatches.add(m.group());
+                }
+                if (allMatches.size() != 0) {
+                    return allMatches.get(this.matchSeq.intValue());
                 } else {
                     return null;
                 }
