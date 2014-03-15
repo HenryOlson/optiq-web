@@ -50,7 +50,7 @@
             fields: [
               // note the use of a pattern match in the following
               // matchSeq is optional and defaults to 0
-              {th: "2012 rank", name: "Rank", type: "int", match: "(\\d+)", matchSeq: 0},
+              {th: "2012 rank", name: "Rank", type: "int", match: "\\d+", matchSeq: 0},
               {th: "City", selector: "a", selectedElement: 0},
               {th: "State[5]", name: "State", selector: "a:eq(0)"},
               {th: "2012 estimate", name: "Population", type: "double"},
@@ -61,12 +61,12 @@
               {th: "2012 land area", name: "Land Area", type: "double", selector: ":not(span)"},
               {th: "2012 population density", skip: "true"},
               // eliminate the degree symbol from the location field
-              {th: "Location", replace: "\u00B0", replaceWith: " "},
-              // note - it's not presently possible to create two columns from one HTML column
-              //{th: "Location", name: "Latitude",
-              //    replace: "\u00B0", replaceWith: " ", match: "\\d+\\.\\d+", type: "double"},
-              //{th: "Location", name: "Longitude",
-              //    replace: "\u00B0", replaceWith: " ", match: "\\d+\\.\\d+", matchSeq: 1, type: "double"},
+              //{th: "Location", replace: "\u00B0", replaceWith: " "},
+              // note - it's now possible to create multiple columns from one HTML column
+              {th: "Location", name: "Latitude", replace: "\u00B0", replaceWith: " ",
+                    match: "\\d+\\.\\d+", type: "double"},
+              {th: "Location", name: "Longitude", replace: "\u00B0", replaceWith: " ",
+                    match: "\\d+\\.\\d+", matchSeq: 1, type: "double"},
               // note that field definitions do not need to be in HTML table order - just makes it easier
               {th: "ANSI", skip: "true"}
             ]

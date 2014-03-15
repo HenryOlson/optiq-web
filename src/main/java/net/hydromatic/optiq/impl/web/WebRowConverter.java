@@ -37,8 +37,10 @@ import java.text.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,7 +60,6 @@ public class WebRowConverter {
 
     // row parser configuration
     private ArrayList<FieldDef> fields;
-    private ArrayList<Integer> validFields;
 
     // constructor
     public WebRowConverter(WebReader webReader, ArrayList<Map<String, Object>> fieldConfigs) {
@@ -70,119 +71,134 @@ public class WebRowConverter {
     //      to initialize the table reader
     // NB:  object initialization is deferred to avoid unnecessary URL reads
     private void initialize() {
-            if (this.initialized) {
-                return;
-            }
+        if (this.initialized) {
+            return;
+        }
+        try {
             this.fields = new ArrayList<FieldDef>();
-            this.validFields = new ArrayList<Integer>();
+            final Elements headerElements = this.webReader.getHeadings();
 
-            final Map<String, Map<String, Object>> colMap = new HashMap();
-            if (this.fieldConfigs != null) {
-                for (Map<String, Object> fieldConfig : this.fieldConfigs) {
-                    colMap.put((String) fieldConfig.get("th"), fieldConfig);
+            // create a name to index map for HTML table elements
+            final Map<String, Integer> headerMap = new HashMap();
+            int i = 0;
+            for (Element th : headerElements) {
+                String heading = th.text();
+                if (headerMap.containsKey(heading)) {
+                    throw new Exception("duplicate heading: '" + heading + "'");
                 }
+                headerMap.put(heading, new Integer(i++));
             }
 
+            // instantiate the field definitions
+            Set<String> colNames = new HashSet();
+            Set<String> sources = new HashSet();
+            if (this.fieldConfigs != null) {
             try {
-                final Elements header = this.webReader.getHeadings();
-                int fieldIx = 0;
+                for (Map<String, Object> fieldConfig : this.fieldConfigs) {
 
-                for (Element th : header) {
-                    String name;
-                    name = th.text();
-
+                    String thName = (String) fieldConfig.get("th");
+                    String name = thName;
+                    String newName;
                     WebFieldType type = null;
                     boolean skip = false;
-                    Map<String, Object> fieldConfig;
 
-                    if ((fieldConfig = colMap.get(name)) != null) {
-                        String newName;
-
-                        if ((newName = (String) fieldConfig.get("name")) != null) {
-                            name = newName;
-                        }
-
-                        String typeString = (String) fieldConfig.get("type");
-
-                        if (typeString != null) {
-                            type = WebFieldType.of(typeString);
-                        }
-
-                        String sSkip = (String) fieldConfig.get("skip");
-
-                        if (sSkip != null) {
-                            skip = Boolean.parseBoolean(sSkip);
-                        }
+                    if (!headerMap.containsKey(thName)) {
+                            throw new Exception("bad source column name: '" + thName + "'");
+                    }
+                    if ((newName = (String) fieldConfig.get("name")) != null) {
+                        name = newName;
+                    }
+                    if (colNames.contains(name)) {
+                        throw new Exception("duplicate column name: '" + name + "'");
                     }
 
+                    String typeString = (String) fieldConfig.get("type");
+                    if (typeString != null) {
+                        type = WebFieldType.of(typeString);
+                    }
+
+                    String sSkip = (String) fieldConfig.get("skip");
+                    if (sSkip != null) {
+                        skip = Boolean.parseBoolean(sSkip);
+                    }
+
+                    Integer sourceIx = headerMap.get(thName);
+                    colNames.add(name);
+                    sources.add(thName);
                     if (!skip) {
-                        this.validFields.add(new Integer(fieldIx));
+                        addFieldDef(name, type, fieldConfig, sourceIx.intValue());
                     }
-
-                    addFieldDef(name, type, skip, fieldConfig);
-                    fieldIx++;
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            this.initialized = true;
-        }
-
-        // add another field definition to the WebRowConverter during initialization
-        private void addFieldDef(String name, WebFieldType type, boolean skip,
-            Map<String, Object> config) {
-            this.fields.add(new FieldDef(name, type, skip, config));
-        }
-
-        // convert a row of JSoup Elements to an array of java objects
-        public Object toRow(Elements rowElements, int[] fields) {
-            initialize();
-            final Object[] objects = new Object[fields.length];
-
-            for (int i = 0; i < fields.length; i++) {
-                int field = fields[i];
-                int elementIx = this.validFields.get(field).intValue();
-                objects[i] = this.fields.get(elementIx).convert(rowElements.get(elementIx));
             }
 
-            return objects;
-        }
-
-        public int width() {
-            initialize();
-            return this.validFields.size();
-        }
-
-        public RelDataType getRowType(JavaTypeFactory typeFactory) {
-            initialize();
-            List<String> names = new ArrayList<String>();
-            List<RelDataType> types = new ArrayList<RelDataType>();
-
-            // iterate through FieldDefs, populating names and types
-            for (FieldDef f : this.fields) {
-                if (f.include()) {
-                    names.add(f.getName());
-
-                    WebFieldType fieldType = f.getType();
-                    RelDataType type;
-
-                    if (fieldType == null) {
-                        type = typeFactory.createJavaType(String.class);
-                    } else {
-                        type = fieldType.toType(typeFactory);
-                    }
-
-                    types.add(type);
+            // pick up any data elements not explicitly defined
+            for (String name : headerMap.keySet()) {
+                if (!sources.contains(name) && !colNames.contains(name)) {
+                    addFieldDef(name, null, null, headerMap.get(name).intValue());
                 }
             }
 
-            if (names.isEmpty()) {
-                names.add("line");
-                types.add(typeFactory.createJavaType(String.class));
+        // ToDo
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.initialized = true;
+    }
+
+    // add another field definition to the WebRowConverter during initialization
+    private void addFieldDef(String name, WebFieldType type,
+        Map<String, Object> config, int sourceCol) {
+        this.fields.add(new FieldDef(name, type, config, sourceCol));
+    }
+
+    // convert a row of JSoup Elements to an array of java objects
+    public Object toRow(Elements rowElements, int[] projection) {
+        initialize();
+        final Object[] objects = new Object[projection.length];
+
+        for (int i = 0; i < projection.length; i++) {
+            int field = projection[i];
+            objects[i] = this.fields.get(field).convert(rowElements);
+        }
+        return objects;
+    }
+
+    public int width() {
+        initialize();
+        return this.fields.size();
+    }
+
+    public RelDataType getRowType(JavaTypeFactory typeFactory) {
+        initialize();
+        List<String> names = new ArrayList<String>();
+        List<RelDataType> types = new ArrayList<RelDataType>();
+
+        // iterate through FieldDefs, populating names and types
+        for (FieldDef f : this.fields) {
+            names.add(f.getName());
+
+            WebFieldType fieldType = f.getType();
+            RelDataType type;
+
+            if (fieldType == null) {
+                type = typeFactory.createJavaType(String.class);
+            } else {
+                type = fieldType.toType(typeFactory);
             }
 
-            return typeFactory.createStructType(Pair.zip(names, types));
+            types.add(type);
         }
+
+        if (names.isEmpty()) {
+            names.add("line");
+            types.add(typeFactory.createJavaType(String.class));
+        }
+
+        return typeFactory.createStructType(Pair.zip(names, types));
+    }
 
     // responsible for parsing an HTML table cell
     private class CellReader {
@@ -276,21 +292,21 @@ public class WebRowConverter {
     private class FieldDef {
         String name;
         WebFieldType type;
-        boolean skip;
         Map<String, Object> config;
         CellReader cellReader;
+        int cellSeq;
 
-        public FieldDef(String name, WebFieldType type, boolean skip,
-            Map<String, Object> config) {
+        public FieldDef(String name, WebFieldType type,
+            Map<String, Object> config, int cellSeq) {
             this.name = name;
             this.type = type;
-            this.skip = skip;
             this.config = config;
             this.cellReader = new CellReader(config);
+            this.cellSeq = cellSeq;
         }
 
-        public Object convert(Element e) {
-            return toObject(this.type, this.cellReader.read(e));
+        public Object convert(Elements row) {
+            return toObject(this.type, this.cellReader.read(row.get(this.cellSeq)));
         }
 
         public String getName() {
@@ -299,10 +315,6 @@ public class WebRowConverter {
 
         public WebFieldType getType() {
             return this.type;
-        }
-
-        public boolean include() {
-            return !this.skip;
         }
 
         private java.util.Date parseDate(String string) {
