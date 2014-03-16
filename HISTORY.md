@@ -2,12 +2,11 @@
 
 For a full list of releases, see <a href="https://github.com/HenryOlson/optiq-web/releases">github</a>.
 
-## Next - 0.2 / 2014-03-14?
+## <a href="https://github.com/HenryOlson/optiq-web/releases/tag/optiq-web-0.2">0.2</a> / 2014-03-17
 
-ToDo
+* Allow multiple optiq columns to be derived from one HTML column - e.g. Location -> Lat, Lon
+* Improved pattern match - added matchSeq to allow selection of n-th match
 * Sync with optiq-0.5 - eliminate equijoin warning messages (among other things)
-
-Done
 * Renamed and rationalized configuration fields
 * Added replace patterns to cell parsing logic
 * Refactored and decrufted WebEnumerator, WebReader
