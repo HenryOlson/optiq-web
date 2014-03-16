@@ -10,7 +10,7 @@ For a full list of releases, see <a href="https://github.com/HenryOlson/optiq-we
 * Renamed and rationalized configuration fields
 * Added replace patterns to cell parsing logic
 * Refactored and decrufted WebEnumerator, WebReader
-* Add handling for tables without <code><TH></code> elements
+* Add handling for tables without TH elements
 * Improved unit tests - add tests using local files, make URL tests contingent on network access
 * Add ability to parse HTML from local files
 
