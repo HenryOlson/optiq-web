@@ -36,7 +36,7 @@ And learn that California has 69 cities of 100k or more comprising almost 1/2 of
 +---------------------+----------------------+
 ```
 
-Try it yourself at <a href="http://www.websequel.net">optiq-web</a>.
+Try it yourself at <a href="http://www.websequel.net">Optiq Demo</a>.
 
 Download and build
 ==================
