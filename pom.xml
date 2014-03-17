@@ -4,7 +4,7 @@
   <!-- The basics. -->
   <groupId>net.hydromatic</groupId>
   <artifactId>optiq-web</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2</version>
   <packaging>jar</packaging>
 
   <!-- More project information. -->
@@ -74,7 +74,7 @@
     <connection>scm:git:git://github.com/HenryOlson/optiq-web.git</connection>
     <developerConnection>scm:git:git@github.com:HenryOlson/optiq-web.git</developerConnection>
     <url>http://github.com/HenryOlson/optiq-web/tree/master</url>
-    <tag>HEAD</tag>
+    <tag>optiq-web-0.2</tag>
   </scm>
 
   <!-- Dependencies. -->
