@@ -54,12 +54,13 @@ public class WebSchema extends AbstractSchema {
         final ImmutableMap.Builder<String, Table> builder = ImmutableMap.builder();
 
         for (Map<String, Object> tableDef : this.tables) {
-            String tableName = (String) tableDef.get("tableName");
+            String tableName = (String) tableDef.get("name");
 
             try {
                 WebTable table = new WebTable(tableDef, null);
                 builder.put(tableName, table);
             } catch (Exception e) {
+                e.printStackTrace();
                 System.out.println("Unable to instantiate table for: " + tableName);
             }
         }

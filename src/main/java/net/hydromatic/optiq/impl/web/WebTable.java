@@ -62,7 +62,7 @@ public class WebTable extends AbstractQueryableTable
         Integer index = (Integer) tableDef.get("index");
         this.reader = new WebReader(url, selector, index);
         this.converter = new WebRowConverter(this.reader, fieldConfigs);
-        //System.out.println("Created WebTable: " + (String) tableDef.get("tableName"));
+        //System.out.println("Created WebTable: " + (String) tableDef.get("name"));
 
     }
 

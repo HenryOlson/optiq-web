@@ -9,7 +9,7 @@
       operand: {
 	  tables: [ 
         {
-            tableName: "Companies",
+            name: "Companies",
             url: "file:target/test-classes/forbes.html",
             fields: [
               {th: "Rank", type: "int"},
